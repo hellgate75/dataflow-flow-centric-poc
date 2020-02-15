@@ -1,0 +1,11 @@
+stream all undeploy --force true
+app all unregister
+stream all destroy --force true
+#app unregister --type source merge-layer-source
+#app unregister --type processor merge-layer-processor
+#app unregister --type sink merge-layer-sink
+app register --name merge-layer-source --type source --uri maven://com.dataflow.merge.layer:dataflow-ms-merge-layer-source-poc:1.0.0.SNAPSHOT
+app register --name merge-layer-processor --type processor --uri maven://com.dataflow.merge.layer:dataflow-ms-merge-layer-process-poc:1.0.0.SNAPSHOT
+app register --name merge-layer-sink --type sink --uri maven://com.dataflow.merge.layer:dataflow-ms-merge-layer-sink-poc:1.0.0.SNAPSHOT
+stream create --name merge-layer-rabbit-stream --definition "merge-layer-source | merge-layer-processor | merge-layer-sink" --description "App Merge Layer stream" --deploy false
+stream deploy --name merge-layer-rabbit-stream --packageVersion 1.0.0 --propertiesFile ./stream-config/stream-config.properties

@@ -1,0 +1,10 @@
+#!/bin/bash -e
+export APP_DESCR="Flow Centric customization of Spring Cloud Config Server"
+export APP_NAME="dataflow-ms-flow-centric-config-server"
+export MAIN_CLASS="com.dataflow.flow.centric.ms.config.server.ConfigServerApplication"
+export LOG_LEVEL="spring"
+export APP_ARGS=""
+export JVM_ARGS="-Xms1536m -Xmx2048m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Djava.security.egd=file:/dev/./urandom"
+#export JVM_ARGS="-XX:+PrintGCDetails"
+export APP_GROUP="dataflow-flow-centric"
+export REDIRECT_OUTPUT_TO_APP="yes"

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+  	<groupId>com.dataflow.core</groupId>
+  	<artifactId>dataflow-core-pom-parent</artifactId>
+  	<version>19.11.1</version>
+  
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.9.RELEASE</version>
+		<relativePath/>
+	</parent>
+	
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<dataflow-core.version>19.11.1</dataflow-core.version>
+		<java.version>1.8</java.version>
+		<mysql.version>8.0.17</mysql.version>
+		<elasticsearch-rest-high-level-client.version>5.6.16</elasticsearch-rest-high-level-client.version>
+		<elasticsearch-rest-client.version>5.6.16</elasticsearch-rest-client.version>
+		<elasticsearch.version>5.6.16</elasticsearch.version>
+		<jackson.databind.version>2.10.1</jackson.databind.version>
+		<jackson.annotations.version>2.10.1</jackson.annotations.version>
+		<jackson.version>2.10.1</jackson.version>
+		<poi-ooxml-schemas.version>4.1.1</poi-ooxml-schemas.version>
+		<poi-ooxml.version>4.1.1</poi-ooxml.version>
+		<poi.version>4.1.1</poi.version>
+		<json.version>20180130</json.version>
+		<mail.version>1.4.7</mail.version>
+		<commons-lang.version>2.6</commons-lang.version>
+		<tomcat.version>9.0.22</tomcat.version>
+		<netty.version>4.1.43.Final</netty.version>
+		<guava.version>24.1.1-jre</guava.version>
+		<spring-data-jpa.version>2.1.10.RELEASE</spring-data-jpa.version>
+		<json-sanitizer.version>1.2.0</json-sanitizer.version>
+		<esapi.version>2.2.0.0</esapi.version>
+		<mongo-bson.version>4.0.0-beta1</mongo-bson.version>
+	</properties>
+	
+	<dependencies>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-log4j2</artifactId>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.mongodb</groupId>
+		    <artifactId>bson</artifactId>
+		    <version>${mongo-bson.version}</version><!--$NO-MVN-MAN-VER$-->
+		</dependency>
+	</dependencies>
+	
+  	<packaging>pom</packaging>
+  	<name>dataflow-core-pom-parent</name>
+  	
+</project>

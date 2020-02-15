@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.dataflow.flowcentric</groupId>
+  <artifactId>flow-centric-poc</artifactId>
+  <version>1.0.0.SNAPSHOT</version>
+  <name>Flow Centric Proof of Concept Maven Project</name>
+  <packaging>pom</packaging>
+  <properties>
+
+  </properties>
+  
+  <modules>
+	<module>dataflow-core-pom-parent</module>
+	<module>dataflow-core-lib-logging</module>
+	<module>dataflow-flow-centric-spring-cloud-parent</module>
+	<module>dataflow-ms-flow-centric-config-server</module>
+	<module>dataflow-flow-centric-lib-poc</module>
+	<module>dataflow-ms-flow-centric-source-poc</module>
+	<module>dataflow-ms-flow-centric-process-poc</module>
+	<module>dataflow-ms-flow-centric-sink-poc</module>
+  </modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.8.2</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+</project>

@@ -1,0 +1,8 @@
+-Dspring.profiles.active=dev -Dspring.cloud.config.uri=http://192.168.99.100:8888 -Denvt=D -DenvtPath=3 -DenvtLower=d -DenvtStrUpper=DEV -DenvtStrLower=dev -DenvtServerNum=01 -DrabbitmqIpAddress=192.168.99.100 -Dh2IpAddress=192.168.99.100 -DrabbitmqPort=9082 -Dh2DbPort=65123 -DrabbitmqUser=fcapp -DrabbitmqPassword=fcapp -Dh2DbUser=sa -Dh2DbPassword=sa -DdataflowLoggingFolder=/c/apps/opt/dataflow-flow-centric/log -DmongodbHost=192.168.99.100 -D=mongodbPort=27017 -DmongodbUsername= -DmongodbPassword=
+
+
+
+-Dspring.profiles.active=dev -Dspring.cloud.config.uri=http://localhost:8888 -Denvt=D -DenvtPath=3 -DenvtLower=d -DenvtStrUpper=DEV -DenvtStrLower=dev -DenvtServerNum=01 -DrabbitmqIpAddress=localhost -Dh2IpAddress=169.254.22.214 -DrabbitmqPort=15672 -Dh2DbPort=65123 -DrabbitmqUser=fcapp -DrabbitmqPassword=fcapp -Dh2DbUser=sa -Dh2DbPassword=sa -DdataflowLoggingFolder=/c/apps/opt/dataflow-flow-centric/log -DmongodbHost=localhost -DmongodbPort=27017 -DmongodbUsername= -DmongodbPassword=
+
+
+-Dspring.profiles.active=dev -Dspring.cloud.config.uri=http://localhost:8888 -Denvt=D -DenvtPath=3 -DenvtLower=d -DenvtStrUpper=DEV -DenvtStrLower=dev -DenvtServerNum=01 -Dspring.rabbitmq.host=localhost -Dspring.datasource.url="jdbc:h2:tcp://169.254.22.214:65123/./flow-centric-poc-db;AUTO_RECONNECT=TRUE" -Dspring.rabbitmq.port=15672 -Dh2DbPort=65123 -Dspring.rabbitmq.username=fcapp -Dspring.rabbitmq.password=fcapp -Dspring.datasource.username=sa -Dspring.datasource.password=sa -Ddataflow.logging.folder=/c/apps/opt/dataflow-flow-centric/log -Dspring.data.mongodb.host=localhost -Dspring.data.mongodb.port=27017 -Dspring.data.mongodb.username= -Dspring.data.mongodb.password=

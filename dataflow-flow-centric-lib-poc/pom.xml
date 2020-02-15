@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>dataflow-flow-centric-lib-poc</artifactId>
+	<name>Foundation Library for Flow Centric PoC Framework</name>
+	<description>Dataflow Flow Centric PoC Library</description>
+	<packaging>jar</packaging>
+
+	<parent>
+	    <groupId>com.dataflow.flow.centric</groupId>
+	    <artifactId>dataflow-flow-centric-spring-cloud-parent</artifactId>
+	    <version>1.0.0.SNAPSHOT</version>
+		<relativePath>../dataflow-flow-centric-spring-cloud-parent/pom.xml</relativePath>
+	</parent>
+
+
+	<properties>
+		<spring-cloud-stream.version>3.0.0.RELEASE</spring-cloud-stream.version>
+	</properties>
+
+	<dependencies>
+
+		<!-- Generic Dependencies -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+		</dependency>
+
+		<!-- dataflow Library Dependencies -->
+		<dependency>
+			<groupId>com.dataflow.core.lib</groupId>
+			<artifactId>dataflow-core-lib-logging</artifactId>
+		</dependency>
+
+		<!-- Hibernate/Data Libraries -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+		</dependency>
+		
+		<!-- Batch Core Library -->
+		<dependency>
+		    <groupId>org.springframework.batch</groupId>
+		    <artifactId>spring-batch-core</artifactId>
+		</dependency>
+
+		<!-- Spring and Data Libraries -->
+		<dependency>
+    		<groupId>org.springframework.data</groupId>
+    		<artifactId>spring-data-jpa</artifactId>
+    		<exclusions>
+    			<exclusion>
+    				<groupId>org.springframework.data</groupId>
+    				<artifactId>spring-data-commons</artifactId>
+    			</exclusion>
+    		</exclusions>
+		</dependency>
+		<dependency>
+    		<groupId>org.springframework.data</groupId>
+    		<artifactId>spring-data-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jdbc</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>tomcat-jdbc</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-mongodb</artifactId>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-releasetrain</artifactId>
+		    <version>Lovelace-SR9</version>
+		    <type>pom</type>
+		    <scope>import</scope>
+		</dependency>
+
+		<!-- H2 Driver Libraries -->
+		<dependency>
+		    <groupId>com.h2database</groupId>
+		    <artifactId>h2</artifactId>
+		    <scope>runtime</scope>
+		</dependency>
+		
+		
+				
+		
+		<!-- Test libraries -->
+		<dependency>
+	        <groupId>junit</groupId>
+	        <artifactId>junit</artifactId>
+	        <scope>test</scope>
+	    </dependency>
+	    <dependency>
+		    <groupId>org.hamcrest</groupId>
+		    <artifactId>hamcrest-core</artifactId>
+		    <scope>test</scope>
+		</dependency>
+	    <dependency>
+		    <groupId>org.hamcrest</groupId>
+		    <artifactId>hamcrest-junit</artifactId>
+		    <version>2.0.0.0</version>
+		    <scope>test</scope>
+		</dependency>
+	    <dependency>
+	    	<groupId>org.springframework.boot</groupId>
+	    	<artifactId>spring-boot-configuration-processor</artifactId>
+	    	<optional>true</optional>
+	    </dependency>
+	</dependencies>
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<compilerVersion>1.8</compilerVersion>
+				</configuration>
+			</plugin>
+			<plugin>
+	            <groupId>org.apache.maven.plugins</groupId>
+	            <artifactId>maven-surefire-plugin</artifactId>
+	            <configuration>
+	            	<skipTests>${skipTests}</skipTests>
+	            	<includes>
+	            		<include>**/UT*</include>
+	            	</includes>
+	            </configuration>
+	        </plugin>
+		</plugins>
+	</build>
+
+</project>
