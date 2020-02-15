@@ -19,9 +19,9 @@ import com.dataflow.flow.centric.lib.domain.SourceDataElement;
 import com.dataflow.flow.centric.lib.exceptions.IOFlowException;
 import com.dataflow.flow.centric.lib.helper.HQLHelper;
 import com.dataflow.flow.centric.lib.helper.LoggerHelper;
-import com.dataflow.flow.centric.lib.service.IFlowCentricService;
 import com.dataflow.flow.centric.lib.sql.entity.FlowInputData;
 import com.dataflow.flow.centric.lib.sql.repository.FlowInputDataRepository;
+import com.dataflow.flow.centric.ms.source.service.FlowCentricSourceService;
 import com.dataflow.flow.centric.ms.source.stream.SourceDataFlowIn;
 
 /**
@@ -45,7 +45,7 @@ public class FlowCentricSourceStreamController {
 	protected VlfLogger vlfLogger;
 	
 	@Autowired
-	protected IFlowCentricService<String, SourceDataElement> flowCentricSourceService;
+	protected FlowCentricSourceService flowCentricSourceService;
 	
 	@ServiceActivator(inputChannel=SourceDataFlowIn.INPUT,
 						outputChannel = Source.OUTPUT,

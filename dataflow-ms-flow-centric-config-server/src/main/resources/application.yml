@@ -12,16 +12,17 @@ health:
 
 spring:
   profiles:
-    active: dev,local,compose,kubernetes
+    active: git
   cloud:
     config:
       label: master
       server:
         git:
           uri: https://github.com/hellgate75/dataflow-flow-centric-config
-          searchPaths: dataflow-*, spring-cloud-*
+          search-paths: dataflow-*, spring-cloud-*
           clone-on-start: true
           force-pull: true
+      bootstrap: true
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
 

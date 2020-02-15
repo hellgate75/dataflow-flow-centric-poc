@@ -1,0 +1,4 @@
+#!/bin/sh
+DIR="$(realpath -L "$(dirname "$0")")"
+source $DIR/env
+eval "java $JVM_ARGS -jar ../dataflow-ms-flow-centric-config-server/target/dataflow-ms-flow-centric-config-server-*.jar com.dataflow.flow.centric.ms.config.server.ConfigServerApplication"

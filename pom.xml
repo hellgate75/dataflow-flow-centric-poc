@@ -16,6 +16,7 @@
 	<module>dataflow-flow-centric-spring-cloud-parent</module>
 	<module>dataflow-ms-flow-centric-config-server</module>
 	<module>dataflow-flow-centric-lib-poc</module>
+	<module>dataflow-flow-centric-lib-sink-poc</module>
 	<module>dataflow-ms-flow-centric-source-poc</module>
 	<module>dataflow-ms-flow-centric-process-poc</module>
 	<module>dataflow-ms-flow-centric-sink-poc</module>

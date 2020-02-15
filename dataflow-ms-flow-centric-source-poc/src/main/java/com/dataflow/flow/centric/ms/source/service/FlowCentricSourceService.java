@@ -17,7 +17,7 @@ import com.dataflow.core.lib.logger.VlfLogger.Category;
 import com.dataflow.flow.centric.lib.domain.SourceDataElement;
 import com.dataflow.flow.centric.lib.exceptions.FlowProcessException;
 import com.dataflow.flow.centric.lib.exceptions.IOFlowException;
-import com.dataflow.flow.centric.lib.helper.BsonHelper;
+import com.dataflow.flow.centric.lib.helper.GenericHelper;
 import com.dataflow.flow.centric.lib.helper.LoggerHelper;
 import com.dataflow.flow.centric.lib.service.IFlowCentricService;
 import com.dataflow.flow.centric.lib.sql.repository.FlowInputDataRepository;
@@ -54,7 +54,7 @@ public class FlowCentricSourceService implements IFlowCentricService<String, Sou
 	public SourceDataElement computeStreamData(Long flowId, String modelType, String inputData, Object... arguments)
 			throws IOFlowException {
 		try {
-			BsonDocument bsonObject = BsonHelper.jsonTextToBSON(inputData);
+			BsonDocument bsonObject = GenericHelper.jsonTextToBSON(inputData);
 			// In case of no parse or no exception trigger the call of a null pointer
 			// object will cause an exception, else-wise we have a log record in info
 			// logging level,

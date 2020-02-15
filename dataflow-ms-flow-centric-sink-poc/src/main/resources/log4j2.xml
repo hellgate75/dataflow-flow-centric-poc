@@ -3,7 +3,7 @@
 	monitorInterval="30">
 	<Properties>
 	    <property name="appName">dataflow-ms-flow-centric-sink-poc</property>
-	    <property name="filePath"> /opt/dataflow-flow-centric/log/dataflow-ms-flow-centric-sink-poc/ </property>
+	    <property name="filePath">/opt/dataflow-flow-centric/log</property>
 	</Properties>
 	<Appenders>
 		<Console name="Console-Appender" target="SYSTEM_OUT">

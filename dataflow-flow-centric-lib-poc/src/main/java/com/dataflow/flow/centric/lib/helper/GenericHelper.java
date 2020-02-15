@@ -4,6 +4,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Date;
 
+import org.bson.BsonDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -244,6 +245,10 @@ public class GenericHelper {
 		} catch (InterruptedException e) {
 			//INFO: NOT INPORTANT
 		}
+	}
+
+	public static final BsonDocument jsonTextToBSON(String text) {
+		return BsonDocument.parse(text);
 	}
 	
 }

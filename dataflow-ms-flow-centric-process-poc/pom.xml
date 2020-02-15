@@ -141,7 +141,6 @@
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-releasetrain</artifactId>
-			<version>${spring-cloud-releasetrain.version}</version>
 			<type>pom</type>
 			<scope>import</scope>
 		</dependency>

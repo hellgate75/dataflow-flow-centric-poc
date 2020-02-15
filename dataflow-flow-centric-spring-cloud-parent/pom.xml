@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.1.RELEASE</version>
+		<version>2.2.4.RELEASE</version>
 		<relativePath />
 	</parent>
 
@@ -51,13 +51,13 @@
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 		<spring-cloud-general.version>2.2.0.RELEASE</spring-cloud-general.version>
 		<spring-cloud-streams.version>3.0.0.RELEASE</spring-cloud-streams.version>
-		<spring-cloud-source.version>2.2.1.RELEASE</spring-cloud-source.version>
+		<spring-cloud-source.version>2.2.4.RELEASE</spring-cloud-source.version>
 		<spring-cloud-stream-test.version>2.2.1.RELEASE</spring-cloud-stream-test.version>
 		<spring-oxm.version>5.2.2.RELEASE</spring-oxm.version>
 
 		<app-starters-core.version>2.1.2.BUILD-SNAPSHOT</app-starters-core.version>
-		<spring-boot.version>2.2.1.RELEASE</spring-boot.version>
-		<spring-framework.version>2.2.1.RELEASE</spring-framework.version>
+		<spring-boot.version>2.2.4.RELEASE</spring-boot.version>
+		<spring-framework.version>2.2.4.RELEASE</spring-framework.version>
 		<spring-framework-bom.version>3.2.10.RELEASE</spring-framework-bom.version>
 		<spring-framework-library.version>3.2.3.RELEASE</spring-framework-library.version>
 		<app-metadata-maven-plugin-version>1.0.1.RELEASE</app-metadata-maven-plugin-version>
@@ -66,8 +66,9 @@
 		<spring-cloud-stream-dependencies.version>Horsham.RELEASE</spring-cloud-stream-dependencies.version>
 		<spring-cloud-function-dependencies.version>3.0.0.RELEASE</spring-cloud-function-dependencies.version>
 		<spring-cloud-dependencies.version>Hoxton.RC2</spring-cloud-dependencies.version>
-		<spring-cloud-releasetrain.version>Moore-SR3</spring-cloud-releasetrain.version>
-		<spring-cloud-config-server.version>2.2.1.RELEASE</spring-cloud-config-server.version>
+    	
+    	<spring-cloud-releasetrain.version>Fowler-SR2</spring-cloud-releasetrain.version>
+    	<spring-cloud-config-server.version>2.2.1.RELEASE</spring-cloud-config-server.version>
 	</properties>
 
 	<dependencyManagement>
@@ -113,7 +114,6 @@
 				<artifactId>spring-data-releasetrain</artifactId>
 				<version>${spring-cloud-releasetrain.version}</version>
 				<type>pom</type>
-				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<!-- Import dependency management from Spring Boot -->
