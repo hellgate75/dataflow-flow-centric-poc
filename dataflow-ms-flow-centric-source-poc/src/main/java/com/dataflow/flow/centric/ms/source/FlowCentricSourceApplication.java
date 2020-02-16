@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConf
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author Fabrizio Torelli (hellgate75@gmail.com)
@@ -23,7 +24,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan("com.dataflow.*")
 @EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class, WebMvcAutoConfiguration.class, MongoAutoConfiguration.class})
 @RefreshScope
-@ComponentScan(lazyInit = true, value={"com.dataflow.core.*","com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.ms.source.*" })
+@EnableScheduling
+@ComponentScan(value={"com.dataflow.core.*","com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.ms.source.*" })
 public class FlowCentricSourceApplication {
 
 	/**

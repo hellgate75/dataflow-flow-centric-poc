@@ -5,11 +5,6 @@ package com.dataflow.flow.centric.ms.source.service;
 
 import org.bson.BsonDocument;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.support.GenericMessage;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.dataflow.core.lib.logger.VlfLogger;
@@ -22,19 +17,13 @@ import com.dataflow.flow.centric.lib.helper.LoggerHelper;
 import com.dataflow.flow.centric.lib.service.IFlowCentricService;
 import com.dataflow.flow.centric.lib.sql.repository.FlowInputDataRepository;
 import com.dataflow.flow.centric.ms.source.stream.FlowCentricSource;
-import com.dataflow.flow.centric.ms.source.stream.SourceDataFlowOut;
 
 /**
  * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 @Component
-@EnableScheduling
-@Configuration
 public class FlowCentricSourceService implements IFlowCentricService<String, SourceDataElement> {
-	
-	@Value("${dataflow.flow.centric.model.field.name}")
-	private String bSonModelField;
 	
 	@Autowired
 	protected FlowCentricSource flowCentricSource;
@@ -44,9 +33,6 @@ public class FlowCentricSourceService implements IFlowCentricService<String, Sou
 
 	@Autowired
 	protected FlowInputDataRepository flowInputDataRepository;
-	
-	@Autowired
-	protected SourceDataFlowOut sourceDataFlowOut;
 	
 	
 	
@@ -82,26 +68,6 @@ public class FlowCentricSourceService implements IFlowCentricService<String, Sou
 			throw new FlowProcessException(message, e);
 		}
 	}
-
-	/**
-	 * **************** RANDOM DATA GENERATOR FOR PUSHING DATA INTO THE SOURCE STREAM ******************* 
-	 * Random JSON Generation for Source Input Stream.
-	 * SourceDataFlowOut => output of SourceDataFlowIn input, in this case for a better understanding
-	 * SourceDataFlowOut send message to SourceDataFlowIn and then real process step is
-	 * SourceDataFlowIn receive Message and activate the Source -> Process -> Sink Data Flow
-	 * 
-	 */
-	@Scheduled(initialDelay = 2000, fixedDelayString = "${dataflow.flow.centric.fake.producer.tick-interval-millis}")
-	protected void refreshProcessCommanderServiceList() {
-		//TODO: Generate periodically random json and send to Output
-		String jsonObjectText = "{\"model\": \"Generic\",\"id\": 5}";
-		try {
-			GenericMessage<String> message = new GenericMessage<String>(jsonObjectText);
-			sourceDataFlowOut.output().send(message);
-		} catch (Exception e) {
-			String message = String.format("Unable to execute send data for Stream Data Sourcing -> error (%s) message: %s -> input : %s", e.getClass().getName(), e.getMessage(), jsonObjectText);
-			LoggerHelper.logError(vlfLogger, "FlowCentricSourceService::refreshProcessCommanderServiceList", message, Category.BUSINESS_ERROR, e);
-		}
-	}
+	
 
 }

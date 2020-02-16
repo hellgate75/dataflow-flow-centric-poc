@@ -1,3 +1,3 @@
 #!/bin/sh -e
-export BASE_ARGS="-Dspring.cloud.config.uri=http://localhost:8888 -Denvt=D -DenvtPath=3 -DenvtLower=d -DenvtStrUpper=DEV -DenvtStrLower=dev -DenvtServerNum=01"
+export BASE_ARGS="--spring.cloud.config.uri=http://localhost:8888 --envt=D --envtPath=3 --envtLower=d --envtStrUpper=DEV --envtStrLower=dev --envtServerNum=01"
 export JVM_ARGS="-Xms512m -Xmx732m"

@@ -33,7 +33,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 @Component
@@ -142,6 +142,8 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 			updateSuccess(flowId, flowInputData, flowProcessData);
 			Codec<Document> codec = db.getCodecRegistry().get(Document.class);
 			Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
+			mongoDocument.put("_object_model", inputData.getModelType());
+			mongoDocument.put("_object_index", inputData.getIndex());
 			collection.insertOne( mongoDocument );
 			Long mongoDocumentId = 0l;
 			if ( mongoDocument.containsKey("_id") )

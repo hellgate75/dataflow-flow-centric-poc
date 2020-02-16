@@ -10,14 +10,14 @@ import org.bson.BsonDocument;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoCredential;
 import com.mongodb.MongoClientSettings.Builder;
+import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 public final class BsonHelper {

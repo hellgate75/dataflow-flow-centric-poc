@@ -1,6 +1,6 @@
 #!/bin/sh
 DIR="$(realpath -L "$(dirname "$0")")"
 source $DIR/env
-ARGS="-Dspring.profiles.active=sink-dev -Dspring.profiles.default=sink-dev $BASE_ARGS $@"
+ARGS="--spring.profiles.active=sink-dev --spring.profiles.default=sink-dev $BASE_ARGS $@"
 eval "java $JVM_ARGS -jar $DIR/../dataflow-ms-flow-centric-sink-poc/target/dataflow-ms-flow-centric-sink-poc-*.jar com.dataflow.flow.centric.ms.sink.FlowCentricSinkApplication $ARGS"
 

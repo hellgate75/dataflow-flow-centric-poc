@@ -12,7 +12,7 @@ import com.dataflow.flow.centric.lib.sink.helper.BsonHelper;
 import com.mongodb.client.MongoClient;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 @Configuration

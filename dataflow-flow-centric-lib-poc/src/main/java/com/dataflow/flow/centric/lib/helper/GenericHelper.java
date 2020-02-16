@@ -13,7 +13,7 @@ import com.dataflow.core.lib.logger.VlfLogger.LogLevel;
 import com.dataflow.core.lib.logger.VlfLogger.Severity;
 
 /**
- * @author Administrator (Fabrizio Torelli - hellgate75@gmail.com)
+ * @author Fabrizio Torelli (hellgate75@gmail.com) (Fabrizio Torelli - hellgate75@gmail.com)
  */
 public class GenericHelper {
 

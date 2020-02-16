@@ -8,7 +8,7 @@ import java.io.Serializable;
 import org.bson.BsonDocument;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 public class SourceDataElement implements Serializable {

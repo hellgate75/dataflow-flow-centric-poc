@@ -10,7 +10,7 @@ import org.bson.BsonDocument;
 import com.dataflow.flow.centric.lib.domain.metadata.Metadata;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 public class ProcessedDataElement implements Serializable {
@@ -22,6 +22,7 @@ public class ProcessedDataElement implements Serializable {
 	private Long flowId;
 	private Long processId;
 	private String modelType;
+	private String index;
 	private BsonDocument bsonInputObject;
 	private Metadata bsonMetadata;
 	private String noSqlCollection;
@@ -30,15 +31,17 @@ public class ProcessedDataElement implements Serializable {
 	 * @param flowId
 	 * @param processId
 	 * @param modelType
+	 * @param index
 	 * @param noSqlCollection
 	 * @param bsonInputObject
 	 * @param bsonMetadataObject
 	 */
-	public ProcessedDataElement(Long flowId, Long processId, String modelType, String noSqlCollection, BsonDocument bsonInputObject, Metadata bsonMetadataObject) {
+	public ProcessedDataElement(Long flowId, Long processId, String modelType, String index, String noSqlCollection, BsonDocument bsonInputObject, Metadata bsonMetadataObject) {
 		super();
 		this.flowId = flowId;
 		this.processId = processId;
 		this.modelType = modelType;
+		this.index = index;
 		this.noSqlCollection = noSqlCollection;
 		this.bsonInputObject = bsonInputObject;
 		this.bsonMetadata = bsonMetadataObject;
@@ -66,6 +69,13 @@ public class ProcessedDataElement implements Serializable {
 	}
 
 	/**
+	 * @return the index
+	 */
+	public String getIndex() {
+		return index;
+	}
+
+	/**
 	 * @return the bsonInputObject
 	 */
 	public BsonDocument getBsonInputObject() {
@@ -90,7 +100,10 @@ public class ProcessedDataElement implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((bsonInputObject == null) ? 0 : bsonInputObject.hashCode());
+		result = prime * result + ((bsonMetadata == null) ? 0 : bsonMetadata.hashCode());
 		result = prime * result + ((flowId == null) ? 0 : flowId.hashCode());
+		result = prime * result + ((index == null) ? 0 : index.hashCode());
 		result = prime * result + ((modelType == null) ? 0 : modelType.hashCode());
 		result = prime * result + ((noSqlCollection == null) ? 0 : noSqlCollection.hashCode());
 		result = prime * result + ((processId == null) ? 0 : processId.hashCode());
@@ -106,10 +119,25 @@ public class ProcessedDataElement implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProcessedDataElement other = (ProcessedDataElement) obj;
+		if (bsonInputObject == null) {
+			if (other.bsonInputObject != null)
+				return false;
+		} else if (!bsonInputObject.equals(other.bsonInputObject))
+			return false;
+		if (bsonMetadata == null) {
+			if (other.bsonMetadata != null)
+				return false;
+		} else if (!bsonMetadata.equals(other.bsonMetadata))
+			return false;
 		if (flowId == null) {
 			if (other.flowId != null)
 				return false;
 		} else if (!flowId.equals(other.flowId))
+			return false;
+		if (index == null) {
+			if (other.index != null)
+				return false;
+		} else if (!index.equals(other.index))
 			return false;
 		if (modelType == null) {
 			if (other.modelType != null)
@@ -132,9 +160,9 @@ public class ProcessedDataElement implements Serializable {
 	@Override
 	public String toString() {
 		return "ProcessedDataElement [flowId=" + flowId + ", processId=" + processId + ", modelType=" + modelType
-				+ ", bsonInputObject=" + (bsonInputObject != null ? bsonInputObject.toJson() : "null") + 
-				", bsonMetadataObject=" + (bsonMetadata != null ? bsonMetadata.toJson() : "null")
+				+ ", index=" + index + ", bsonInputObject=" + bsonInputObject.toJson() + ", bsonMetadata=" + bsonMetadata
 				+ ", noSqlCollection=" + noSqlCollection + "]";
 	}
+
 	
 }

@@ -8,7 +8,7 @@ import org.bson.BsonDocument;
 import com.dataflow.flow.centric.lib.domain.metadata.Metadata;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 public class SinkDataElement {

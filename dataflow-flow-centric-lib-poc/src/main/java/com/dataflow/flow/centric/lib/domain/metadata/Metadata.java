@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.bson.BsonDocument;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 public class Metadata implements Serializable {

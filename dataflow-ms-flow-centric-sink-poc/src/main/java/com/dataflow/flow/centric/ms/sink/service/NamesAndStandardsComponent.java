@@ -7,7 +7,7 @@ import org.bson.BsonDocument;
 import org.springframework.stereotype.Component;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 @Component

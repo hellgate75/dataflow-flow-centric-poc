@@ -4,8 +4,10 @@
 package com.dataflow.flow.centric.ms.process.service;
 
 import java.sql.Date;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,12 @@ import com.dataflow.flow.centric.lib.sql.repository.FlowProcessDataRepository;
 @Configuration
 public class FlowCentricProcessService implements IFlowCentricService<String, ProcessedDataElement> {
 	
+	@Value("${dataflow.flow.centric.model.field.names}")
+	private String bSonModelFields;
+	
+	@Value("${dataflow.flow.centric.model.field.indexes}")
+	private String bSonIndexFields;
+	
 	@Autowired
 	protected VlfLogger vlfLogger;
 
@@ -40,6 +48,9 @@ public class FlowCentricProcessService implements IFlowCentricService<String, Pr
 	
 	@Autowired
 	protected FlowProcessDataRepository flowProcessDataRepository;
+	
+	@Autowired
+	protected KeyManagerService keyManagerService;
 	
 	/*
 	 * Updating the MONITOR DB about success during processing
@@ -113,11 +124,21 @@ public class FlowCentricProcessService implements IFlowCentricService<String, Pr
 			// In case of no parse or no exception trigger the call of a null pointer
 			// object will cause an exception, else-wise we have a log record in info
 			// logging level,
+			
+			modelType = bSonModelFields != null && ! bSonModelFields.trim().isEmpty() ? 
+										keyManagerService.collectModelFrom(inputDataRequest.getBsonObject(), Arrays.asList(bSonModelFields.split(","))) :
+										"unknown";
+			if ( modelType == null || bSonModelFields.trim().isEmpty() ) {
+				modelType = "unknown";
+			}
+			String index = bSonIndexFields != null && ! bSonIndexFields.trim().isEmpty() ?  
+					keyManagerService.collectIndexesFrom(inputDataRequest.getBsonObject(), Arrays.asList(bSonIndexFields.split(","))) : 
+					"";
 			LoggerHelper.logInfo(vlfLogger, "FlowCentricSourceService::computeStreamData", 
 					String.format("Metadata Object generated successfullyL %s", bsonMetadata.toJson()));
-			String noSqlCollection = "";
+			String noSqlCollection = "flow-centric-" + modelType.toLowerCase();
 			updateSuccess(flowId, inputDataRequest, flowProcessData);
-			return new ProcessedDataElement(flowId, flowProcessData.getId(), modelType, noSqlCollection, inputDataRequest.getBsonObject(), bsonMetadata);
+			return new ProcessedDataElement(flowId, flowProcessData.getId(), modelType, index, noSqlCollection, inputDataRequest.getBsonObject(), bsonMetadata);
 		} catch (Exception e) {
 			String message = String.format("Unable to execute request for Stream Data Processing Service -> error (%s) message: %s -> input : %s", e.getClass().getName(), e.getMessage(), inputData);
 			LoggerHelper.logError(vlfLogger, "FlowCentricSourceService::computeStreamData", message, Category.BUSINESS_ERROR, e);

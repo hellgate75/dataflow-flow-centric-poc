@@ -42,6 +42,9 @@
 		<Logger name="com.dataflow.core" level="info" additivity="false">
 			<AppenderRef ref="service-log" />
 		</Logger>
+		<Logger name="com.dataflow.flow.centric" level="info" additivity="false">
+			<AppenderRef ref="service-log" />
+		</Logger>
 		<Root level="info">
 			<AppenderRef ref="spring-log" />
 		</Root>

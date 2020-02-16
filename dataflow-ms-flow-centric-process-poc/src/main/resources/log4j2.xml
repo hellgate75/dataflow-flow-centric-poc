@@ -2,13 +2,15 @@
 <Configuration status="debug" name="FlowCentricPoC"
 	monitorInterval="30">
 	<Properties>
-	    <property name="appName">dataflow-ms-flow-centric-process-poc</property>
-	    <property name="filePath">/opt/dataflow-flow-centric/log</property>
-		</Properties>
+		<property name="appName">dataflow-ms-flow-centric-process-poc
+		</property>
+		<property name="filePath">/opt/dataflow-flow-centric/log</property>
+	</Properties>
 	<Appenders>
 		<Console name="Console-Appender" target="SYSTEM_OUT">
 			<PatternLayout>
-				<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%t] [%c{1}] [%l] - %m %n</pattern>
+				<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%t] [%c{1}] [%l]
+					- %m %n</pattern>
 			</PatternLayout>
 		</Console>
 
@@ -17,12 +19,15 @@
 			filePattern="${filePath}/${appName}/$${date:yyyy-MM}/${appName}-spring-%d{MM-dd-yyyy}-%i.log"
 			append="true">
 			<PatternLayout>
-				<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%t] [%c{1}] [%l] - %m %n</pattern>
+				<pattern>[%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%t] [%c{1}] [%l]
+					- %m %n</pattern>
 			</PatternLayout>
 			<Policies>
-				<CronTriggeringPolicy evaluateOnStartup="true" schedule="0 30 1 * * ?"/>
+				<CronTriggeringPolicy evaluateOnStartup="true"
+					schedule="0 30 1 * * ?" />
 			</Policies>
-			<DefaultRolloverStrategy min="1" max="99999" fileIndex="max"/>
+			<DefaultRolloverStrategy min="1" max="99999"
+				fileIndex="max" />
 		</RollingFile>
 		<RollingFile name="service-log"
 			fileName="${filePath}/${appName}/${appName}-service.log"
@@ -32,17 +37,21 @@
 				<pattern>%m %n</pattern>
 			</PatternLayout>
 			<Policies>
-				<CronTriggeringPolicy evaluateOnStartup="true" schedule="0 30 1 * * ?"/>
+				<CronTriggeringPolicy evaluateOnStartup="true"
+					schedule="0 30 1 * * ?" />
 			</Policies>
-			<DefaultRolloverStrategy min="1" max="99999" fileIndex="max"/>
+			<DefaultRolloverStrategy min="1" max="99999"
+				fileIndex="max" />
 		</RollingFile>
 
 	</Appenders>
 	<Loggers>
-		<Logger name="com.dataflow.core" level="info" additivity="false">
+		<Logger name="com.dataflow.core" level="info"
+			additivity="false">
 			<AppenderRef ref="service-log" />
 		</Logger>
-		<Logger name="com.dataflow.flow.centric.ms" level="info" additivity="false">
+		<Logger name="com.dataflow.flow.centric" level="info"
+			additivity="false">
 			<AppenderRef ref="service-log" />
 		</Logger>
 		<Root level="info">

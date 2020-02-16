@@ -7,9 +7,9 @@ import java.sql.Date;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.cloud.stream.messaging.Source;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.integration.annotation.ServiceActivator;
 
 import com.dataflow.core.lib.logger.VlfLogger;
@@ -21,20 +21,18 @@ import com.dataflow.flow.centric.lib.helper.HQLHelper;
 import com.dataflow.flow.centric.lib.helper.LoggerHelper;
 import com.dataflow.flow.centric.lib.sql.entity.FlowInputData;
 import com.dataflow.flow.centric.lib.sql.repository.FlowInputDataRepository;
+import com.dataflow.flow.centric.lib.sql.repository.FlowProcessDataRepository;
 import com.dataflow.flow.centric.ms.source.service.FlowCentricSourceService;
 import com.dataflow.flow.centric.ms.source.stream.SourceDataFlowIn;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
+@EnableJpaRepositories(basePackageClasses = {FlowInputDataRepository.class, FlowProcessDataRepository.class})
 @EnableBinding({Source.class, SourceDataFlowIn.class})
 public class FlowCentricSourceStreamController {
-	
-	@Value("${dataflow.flow.centric.model.field.name}")
-	private String bSonModelField;
 
-	
 	@Autowired
 	protected FlowInputDataRepository flowInputDataRepository;
 	
@@ -55,10 +53,11 @@ public class FlowCentricSourceStreamController {
 	public SourceDataElement interceptSourceDataFlowRowEntity(String inputData) {
 		Long streamId = null;
 		try {
-			String type = null;
+			String type = "";
+//			inputData = JMSHelper.gUnzip(inputData.getBytes());
 			FlowInputData data = flowCentricConfig.createAndSaveNewFlowInputData(flowInputDataRepository,inputData, type);
 			streamId = data.getId();
-			return flowCentricSourceService.computeStreamData(data.getId(), type, inputData, bSonModelField);
+			return flowCentricSourceService.computeStreamData(data.getId(), type, inputData);
 		} catch (IOFlowException e) {
 			String message = String.format("Unable to process Input Data for Stream Data Processing Service -> error message: (%s) -> %s, data = %s", e.getClass().getName(), e.getMessage(), inputData);
 			LoggerHelper.logError(vlfLogger, "FlowCentricSourceStreamController::computeStreamData", message, Category.BUSINESS_ERROR, e);
@@ -80,5 +79,6 @@ public class FlowCentricSourceStreamController {
 			return null;
 		}
 	}
+
 
 }

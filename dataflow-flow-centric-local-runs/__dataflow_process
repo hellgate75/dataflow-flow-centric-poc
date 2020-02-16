@@ -1,5 +1,5 @@
 #!/bin/sh
 DIR="$(realpath -L "$(dirname "$0")")"
 source $DIR/env
-ARGS="-Dspring.profiles.active=process-dev -Dspring.profiles.default=process-dev $BASE_ARGS $@"
+ARGS="--spring.profiles.active=process-dev --spring.profiles.default=process-dev $BASE_ARGS $@"
 eval "java $JVM_ARGS -jar $DIR/../dataflow-ms-flow-centric-process-poc/target/dataflow-ms-flow-centric-process-poc-*.jar com.dataflow.flow.centric.ms.process.FlowCentricProcessApplication $ARGS"

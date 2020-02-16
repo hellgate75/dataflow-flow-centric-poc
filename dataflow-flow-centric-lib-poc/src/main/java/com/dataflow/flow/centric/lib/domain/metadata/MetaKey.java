@@ -14,7 +14,7 @@ import org.bson.BsonType;
 import org.bson.BsonValue;
 
 /**
- * @author Administrator
+ * @author Fabrizio Torelli (hellgate75@gmail.com)
  *
  */
 public class MetaKey implements Serializable {
