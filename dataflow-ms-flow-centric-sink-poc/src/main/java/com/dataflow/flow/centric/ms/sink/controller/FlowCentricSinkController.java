@@ -45,7 +45,7 @@ import com.dataflow.flow.centric.ms.sink.stream.FlowCentricSinkOut;
 @EnableBinding({Sink.class, FlowCentricSinkOut.class})
 public class FlowCentricSinkController implements IThreadMonitor {
 
-	@Value("${dataflow.flow.centric.enable.extrnal.publish}")
+	@Value("${dataflow.flow.centric.enable.external.publish}")
 	protected boolean publishOnExternalQueue;
 	
 	public static final Map<ProcessType, ConcurrentHashMap<UUID, String>> THREADS_MAP = new ConcurrentHashMap<>(0);
@@ -113,7 +113,10 @@ public class FlowCentricSinkController implements IThreadMonitor {
 			autoStartup = "true", 
 			async = "true")
 	public void sinkFlowCentricAndSend(String inputText) {
-		
+		if ( inputText == null || inputText.trim().isEmpty() ) {
+			LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Recovered an empty or null message: <" + inputText + ">", null);
+			return;
+		}
 		Long flowId = 0l;
 		Long processId = 0l;
 		UUID threadUUID = null ;
@@ -129,16 +132,20 @@ public class FlowCentricSinkController implements IThreadMonitor {
 			
 			if ( publishOnExternalQueue && flowCentricSinkOut != null && flowCentricSinkOut.output() != null ) {
 				if ( sde != null ) {
-					try {
-						Message<String> message = new GenericMessage<String>(sde.toJson());
-						flowCentricSinkOut.output().send(message);
-					} catch (Exception e) {
-						String errorMessage = String.format("Errors dunring message out of sink with body object: %s",
-								"" + sde);
-						LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", errorMessage, e);
+					if ( sde.getBsonInputObjectWithmetadata() != null ) {
+						try {
+							Message<String> message = new GenericMessage<String>(sde.toJson());
+							flowCentricSinkOut.output().send(message);
+						} catch (Exception e) {
+							String errorMessage = String.format("Errors dunring message out of sink with body object: %s",
+									"" + sde);
+							LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", errorMessage, e);
+						}
+					} else {
+						LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Null sinked element's internal document , impossible to semd this message, input: " + input, null);
 					}
 				} else {
-					LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Null sinked element, impossoble to semd any message", null);
+					LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Null sinked element, impossoble to semd this message, input: " + input, null);
 				}
 			} else {
 				LoggerHelper.logDebug(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Publish to external domain disabled. Not progressing...");

@@ -44,6 +44,9 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 
     @Value("${spring.data.mongodb.database}")
     private String database;
+    
+    @Value("${dataflow.flow.centric.model.disable.exporting.objects}")
+    private boolean disableSavingObjects;
 
 	@Autowired
 	protected VlfLogger vlfLogger;
@@ -131,47 +134,51 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 			String modelType = inputData.getModelType();
 			flowInputData = HQLHelper.loadFlowInputDataEntity(flowInputDataRepository, flowId);
 			flowProcessData = HQLHelper.loadFlowProcessDataEntity(flowProcessDataRepository, processId);
-			MongoDatabase db = mongoClient.getDatabase(database);
-			collections.addAll(BsonHelper.getMongoDbCollections(mongoClient, db));
-			BsonDocument document = inputData.getBsonInputObject();
-			String collectionName = namesAndStandardsService.normalizeMongoDbCollectionName(inputData.getNoSqlCollection(), document);
-			if ( ! collections.contains(collectionName) ) {
-				BsonHelper.createMongoDbCollection(mongoClient, db, collectionName);
-			}
-			document.putIfAbsent("__bason_metatada_id", new BsonString(inputData.getBsonMetadataId()));
-			document.putIfAbsent("__bason_metatada_collection", new BsonString(inputData.getBsonMetadataCollection()) );
-			updateSuccess(flowId, flowInputData, flowProcessData);
-			Codec<Document> codec = db.getCodecRegistry().get(Document.class);
-			Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
-			mongoDocument.put("_object_model", inputData.getModelType());
-			mongoDocument.put("_object_index", inputData.getIndex());
-			mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, collectionName, mongoDocument);
+			String collectionName = inputData.getNoSqlCollection();
 			String mongoDocumentId = "";
-			BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
-			Optional<String> mongoObjIdOpt = myDocument.entrySet()
-				.parallelStream()
-				.filter(e -> e.getKey().contentEquals("_id"))
-				.map( e -> {
-					BsonValue value = e.getValue();
-					if ( value.getBsonType() == BsonType.INT64 ) {
-						return ""+value.asInt64().getValue();
-					}
-					else if ( value.getBsonType() == BsonType.INT32 ) {
-						return ""+value.asInt64().longValue();
-					}
-					else if ( value.getBsonType() == BsonType.STRING ) {
-						return value.asString().getValue();
-					}
-					else if ( value.getBsonType() == BsonType.OBJECT_ID ) {
-						return value.asObjectId().getValue().toHexString();
-					}
-					return null;
-				})
-				.filter( v -> v != null )
-				.findFirst();
-			if ( mongoObjIdOpt.isPresent() ) {
-				mongoDocumentId = mongoObjIdOpt.get(); 
+			BsonDocument document = null;
+			if ( ! disableSavingObjects ) {
+				MongoDatabase db = mongoClient.getDatabase(database);
+				collections.addAll(BsonHelper.getMongoDbCollections(mongoClient, db));
+				document = inputData.getBsonInputObject();
+				collectionName = namesAndStandardsService.normalizeMongoDbCollectionName(inputData.getNoSqlCollection(), document);
+				if ( ! collections.contains(collectionName) ) {
+					BsonHelper.createMongoDbCollection(mongoClient, db, collectionName);
+				}
+				document.putIfAbsent("__bason_metatada_id", new BsonString(inputData.getBsonMetadataId()));
+				document.putIfAbsent("__bason_metatada_collection", new BsonString(inputData.getBsonMetadataCollection()) );
+				Codec<Document> codec = db.getCodecRegistry().get(Document.class);
+				Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
+				mongoDocument.put("_object_model", inputData.getModelType());
+				mongoDocument.put("_object_index", inputData.getIndex());
+				mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, collectionName, mongoDocument);
+				BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
+				Optional<String> mongoObjIdOpt = myDocument.entrySet()
+					.parallelStream()
+					.filter(e -> e.getKey().contentEquals("_id"))
+					.map( e -> {
+						BsonValue value = e.getValue();
+						if ( value.getBsonType() == BsonType.INT64 ) {
+							return ""+value.asInt64().getValue();
+						}
+						else if ( value.getBsonType() == BsonType.INT32 ) {
+							return ""+value.asInt64().longValue();
+						}
+						else if ( value.getBsonType() == BsonType.STRING ) {
+							return value.asString().getValue();
+						}
+						else if ( value.getBsonType() == BsonType.OBJECT_ID ) {
+							return value.asObjectId().getValue().toHexString();
+						}
+						return null;
+					})
+					.filter( v -> v != null )
+					.findFirst();
+				if ( mongoObjIdOpt.isPresent() ) {
+					mongoDocumentId = mongoObjIdOpt.get(); 
+				}
 			}
+			updateSuccess(flowId, flowInputData, flowProcessData);
 			return new SinkDataElement(flowId, processId, modelType, document, 
 					inputData.getIndex(), inputData.getBsonMetadataId(), inputData.getBsonMetadataCollection(), 
 					collectionName, mongoDocumentId);

@@ -46,7 +46,7 @@ public class SourceDataElement implements Serializable {
 		super();
 		this.flowId = flowId;
 		this.modelType = modelType;
-		this.jsonString = JMSHelper.escapeJsonString(bsonObject.toJson());
+		this.jsonString = bsonObject!=null ? JMSHelper.escapeJsonString(bsonObject.toJson()) : "";
 	}
 	/**
 	 * @param flowId
@@ -57,7 +57,7 @@ public class SourceDataElement implements Serializable {
 		super();
 		this.flowId = flowId;
 		this.modelType = modelType;
-		this.jsonString = JMSHelper.isJsonStringEscapee(bsonObject) ? bsonObject : JMSHelper.escapeJsonString(bsonObject);
+		this.jsonString =  bsonObject != null && ! bsonObject.trim().isEmpty() ?  ( JMSHelper.isJsonStringEscaped(bsonObject) ? bsonObject : JMSHelper.escapeJsonString(bsonObject)) : "";
 	}
 	/**
 	 * @return the flowId
@@ -75,7 +75,9 @@ public class SourceDataElement implements Serializable {
 	 * @return the jsonString
 	 */
 	public String getJsonString() {
-		if ( JMSHelper.isJsonStringEscapee(jsonString) )
+		if (jsonString==null || jsonString.trim().isEmpty())
+			return "";
+		if ( JMSHelper.isJsonStringEscaped(jsonString) )
 			return JMSHelper.unescapeJsonString(jsonString);
 		return jsonString;
 	}
@@ -83,7 +85,9 @@ public class SourceDataElement implements Serializable {
 	 * @param jsonString the jsonString to set
 	 */
 	public void setJsonString(String jsonString) {
-		if ( ! JMSHelper.isJsonStringEscapee(jsonString) )
+		if (jsonString==null || jsonString.trim().isEmpty())
+			return ;
+		if ( ! JMSHelper.isJsonStringEscaped(jsonString) )
 			jsonString = JMSHelper.escapeJsonString(jsonString);
 		this.jsonString = jsonString;
 	}
@@ -103,6 +107,8 @@ public class SourceDataElement implements Serializable {
 	 * @return the bsonObject
 	 */
 	public BsonDocument getBsonObject() {
+		if (jsonString==null || jsonString.trim().isEmpty())
+			return null;
 		return BsonDocument.parse(JMSHelper.unescapeJsonString(jsonString));
 	}
 	@Override

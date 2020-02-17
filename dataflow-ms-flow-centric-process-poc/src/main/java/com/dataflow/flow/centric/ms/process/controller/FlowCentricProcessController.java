@@ -113,7 +113,8 @@ public class FlowCentricProcessController implements IThreadMonitor {
 			async = "true")
 	public String processSourceData(String inputText) {
 		if ( inputText == null || inputText.trim().isEmpty() ) {
-			return null;
+			LoggerHelper.logWarning(vlfLogger, "FlowCentricProcessController::processSourceData", "Recovered an empty or null message: <" + inputText + ">", null);
+			return "";
 		}
 		Long flowId = 0l;
 		String templateName = "";
@@ -147,7 +148,7 @@ public class FlowCentricProcessController implements IThreadMonitor {
 		} finally {
 			threadStopped(threadUUID);
 		}
-		return null;
+		return "";
 	}
 	
 	private void markFlowAndProcessAsSuccess(Long flowId) {

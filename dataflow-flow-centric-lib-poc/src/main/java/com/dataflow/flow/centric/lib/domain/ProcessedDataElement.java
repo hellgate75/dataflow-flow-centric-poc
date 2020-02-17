@@ -59,7 +59,7 @@ public class ProcessedDataElement implements Serializable {
 		this.modelType = modelType;
 		this.index = index;
 		this.noSqlCollection = noSqlCollection;
-		this.jsonString = JMSHelper.escapeJsonString(bsonInputObject.toJson());
+		this.jsonString = bsonInputObject!=null ? JMSHelper.escapeJsonString(bsonInputObject.toJson()) : "";
 		this.bsonMetadataId = bsonMetadataId;
 		this.bsonMetadataCollection = metadataCollection;
 	}
@@ -81,7 +81,7 @@ public class ProcessedDataElement implements Serializable {
 		this.modelType = modelType;
 		this.index = index;
 		this.noSqlCollection = noSqlCollection;
-		this.jsonString = JMSHelper.isJsonStringEscapee(bsonObject) ? bsonObject : JMSHelper.escapeJsonString(bsonObject);
+		this.jsonString = bsonObject != null && ! bsonObject.trim().isEmpty() ?  ( JMSHelper.isJsonStringEscaped(bsonObject) ? bsonObject : JMSHelper.escapeJsonString(bsonObject)) : "";
 		this.bsonMetadataId = bsonMetadataId;
 		this.bsonMetadataCollection = metadataCollection;
 	}
@@ -118,6 +118,8 @@ public class ProcessedDataElement implements Serializable {
 	 * @return the bsonInputObject
 	 */
 	public BsonDocument getBsonInputObject() {
+		if (jsonString==null || jsonString.trim().isEmpty())
+			return null;
 		return BsonDocument.parse(JMSHelper.unescapeJsonString(jsonString));
 	}
 
@@ -146,7 +148,9 @@ public class ProcessedDataElement implements Serializable {
 	 * @return the jsonString
 	 */
 	public String getJsonString() {
-		if ( JMSHelper.isJsonStringEscapee(jsonString) )
+		if (jsonString==null || jsonString.trim().isEmpty())
+			return "";
+		if ( JMSHelper.isJsonStringEscaped(jsonString) )
 			return JMSHelper.unescapeJsonString(jsonString);
 		return jsonString;
 	}
@@ -155,7 +159,9 @@ public class ProcessedDataElement implements Serializable {
 	 * @param jsonString the jsonString to set
 	 */
 	public void setJsonString(String jsonString) {
-		if ( ! JMSHelper.isJsonStringEscapee(jsonString) )
+		if (jsonString==null || jsonString.trim().isEmpty())
+			return ;
+		if ( ! JMSHelper.isJsonStringEscaped(jsonString) )
 			jsonString = JMSHelper.escapeJsonString(jsonString);
 		this.jsonString = jsonString;
 	}

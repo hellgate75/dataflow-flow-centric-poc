@@ -51,7 +51,8 @@ public class FlowCentricSourceStreamController {
 						autoStartup = "true", 
 						async = "true")
 	public String interceptSourceDataFlowRowEntity(String inputText) {
-		if ( inputText == null || inputText.trim().isEmpty()) {
+		if ( inputText == null || inputText.trim().isEmpty() ) {
+			LoggerHelper.logWarning(vlfLogger, "FlowCentricSourceStreamController::interceptSourceDataFlowRowEntity", "Recovered an empty or null message: <" + inputText + ">", null);
 			return "";
 		}
 		Long streamId = null;

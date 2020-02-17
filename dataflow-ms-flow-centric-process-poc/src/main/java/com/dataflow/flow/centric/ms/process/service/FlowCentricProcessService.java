@@ -52,7 +52,10 @@ public class FlowCentricProcessService implements IFlowCentricService<String, Pr
 	
 	@Value("${dataflow.flow.centric.model.field.indexes}")
 	private String bSonIndexFields;
-	
+    
+    @Value("${dataflow.flow.centric.model.disable.exporting.metadata}")
+    private boolean disableSavingMetadata;
+    
 	@Autowired
 	protected VlfLogger vlfLogger;
 
@@ -155,41 +158,43 @@ public class FlowCentricProcessService implements IFlowCentricService<String, Pr
 					String.format("Metadata Object generated successfully: %s", bsonMetadata.toJson()));
 			String noSqlCollection = "flow-centric-" + modelType.toLowerCase();
 			String bsonMetadataCollection = "flow-centric-metadata-" + modelType.toLowerCase();
-			MongoDatabase db = mongoClient.getDatabase(database);
-			collections.addAll(BsonHelper.getMongoDbCollections(mongoClient, db));
-			if ( ! collections.contains(bsonMetadataCollection) ) {
-				BsonHelper.createMongoDbCollection(mongoClient, db, bsonMetadataCollection);
-			}
-			BsonDocument document = bsonMetadata.asDocument();
-			Codec<Document> codec = db.getCodecRegistry().get(Document.class);
-			Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
-			mongoDocument.put("_object_model", inputDataRequest.getModelType());
-			mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, bsonMetadataCollection, mongoDocument);
 			String mongoMetadataId = "";
-			BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
-			Optional<String> metaIdOpt = myDocument.entrySet()
-				.parallelStream()
-				.filter(e -> e.getKey().contentEquals("_id"))
-				.map( e -> {
-					BsonValue value = e.getValue();
-					if ( value.getBsonType() == BsonType.INT64 ) {
-						return ""+value.asInt64().getValue();
-					}
-					else if ( value.getBsonType() == BsonType.INT32 ) {
-						return ""+value.asInt64().longValue();
-					}
-					else if ( value.getBsonType() == BsonType.STRING ) {
-						return value.asString().getValue();
-					}
-					else if ( value.getBsonType() == BsonType.OBJECT_ID ) {
-						return value.asObjectId().getValue().toHexString();
-					}
-					return null;
-				})
-				.filter( v -> v != null )
-				.findFirst();
-			if ( metaIdOpt.isPresent() ) {
-				mongoMetadataId = metaIdOpt.get(); 
+			if ( ! disableSavingMetadata ) {
+				MongoDatabase db = mongoClient.getDatabase(database);
+				collections.addAll(BsonHelper.getMongoDbCollections(mongoClient, db));
+				if ( ! collections.contains(bsonMetadataCollection) ) {
+					BsonHelper.createMongoDbCollection(mongoClient, db, bsonMetadataCollection);
+				}
+				BsonDocument document = bsonMetadata.asDocument();
+				Codec<Document> codec = db.getCodecRegistry().get(Document.class);
+				Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
+				mongoDocument.put("_object_model", inputDataRequest.getModelType());
+				mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, bsonMetadataCollection, mongoDocument);
+				BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
+				Optional<String> metaIdOpt = myDocument.entrySet()
+					.parallelStream()
+					.filter(e -> e.getKey().contentEquals("_id"))
+					.map( e -> {
+						BsonValue value = e.getValue();
+						if ( value.getBsonType() == BsonType.INT64 ) {
+							return ""+value.asInt64().getValue();
+						}
+						else if ( value.getBsonType() == BsonType.INT32 ) {
+							return ""+value.asInt64().longValue();
+						}
+						else if ( value.getBsonType() == BsonType.STRING ) {
+							return value.asString().getValue();
+						}
+						else if ( value.getBsonType() == BsonType.OBJECT_ID ) {
+							return value.asObjectId().getValue().toHexString();
+						}
+						return null;
+					})
+					.filter( v -> v != null )
+					.findFirst();
+				if ( metaIdOpt.isPresent() ) {
+					mongoMetadataId = metaIdOpt.get(); 
+				}
 			}
 			
 			updateSuccess(flowId, inputDataRequest, flowProcessData);

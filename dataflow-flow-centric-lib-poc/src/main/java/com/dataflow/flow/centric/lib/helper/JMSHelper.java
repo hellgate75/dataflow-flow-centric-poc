@@ -163,7 +163,7 @@ public final class JMSHelper {
     	return json.replaceAll(": ", ":").replaceAll(", ", ",").replaceAll("\\\"", "\\\\\"");
     }
     
-    public static final boolean isJsonStringEscapee(String json) {
+    public static final boolean isJsonStringEscaped(String json) {
     	return json.contains("\\\"");
     }
     
@@ -175,10 +175,10 @@ public final class JMSHelper {
     	String json = "{\"name\":\"John\", \"surname\":\"Smith\", \"age\": 5}";
     	String escapedJson = escapeJsonString(json);
     	System.out.println("escapedJson=<" + escapedJson+">");
-    	System.out.println("escapedJson is escaped =<" + isJsonStringEscapee(escapedJson) +">");
+    	System.out.println("escapedJson is escaped =<" + isJsonStringEscaped(escapedJson) +">");
     	String unescapedJson = unescapeJsonString(json);
     	System.out.println("unescapedJson=<" + unescapedJson+">");
-    	System.out.println("unescapedJson is escaped =<" + isJsonStringEscapee(unescapedJson) +">");
+    	System.out.println("unescapedJson is escaped =<" + isJsonStringEscaped(unescapedJson) +">");
     }
     
     
