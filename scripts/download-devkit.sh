@@ -9,19 +9,21 @@ function download() {
 function install() {
 	unzip "$2/$1" -d "$2"
 
-	rm -f "$2/$1"
+    if [[ "n" != "$3" ]]; then
+		rm -f "$2/$1"
+	fi
 }
 
 function download_install() {
-	download "$1" "$DIR"
+	download "$1" "$DIR" "$2"
 
-	install "$1" "$DIR"
+	install "$1" "$DIR" "$2"
 }
 
 if [ -e ./dev-kit.zip ]; then
-     install "dev-kit" "$DIR"
+     install "dev-kit" "$DIR" "n"
 else
-     download_install "scripts.zip"
+     download_install "dev-kit.zip"
 fi
 
 
