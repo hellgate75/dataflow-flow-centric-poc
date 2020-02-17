@@ -26,7 +26,7 @@ Here a sample architecture.
 In the MongoDb instance you can find the flow-centric database.
 
  
-<p align="center"><image width="1273" height="896" src="images/screen-004.png"></p><br/>
+<p align="center"><image width="946" height="666" src="images/screen-004.PNG"></p><br/>
 
 
 
@@ -34,20 +34,20 @@ After a cycle of data streaming we have two MongDb collections per each category
 
 
  
-<p align="center"><image width="1262" height="891" src="images/screen-006.png"></p><br/>
+<p align="center"><image width="946" height="668" src="images/screen-006.PNG"></p><br/>
 
 
 Into data collections we can find some ready indexes:
 
 
  
-<p align="center"><image width="1261" height="894" src="images/screen-007.png"></p><br/>
+<p align="center"><image width="946" height="671" src="images/screen-007.PNG"></p><br/>
 
 
 
 Here how MongDb collections appears.
 
-<p align="center"><image width="1264" height="834" src="images/screen-001.png"></p><br/>
+<p align="center"><image width="946" height="624" src="images/screen-001.PNG"></p><br/>
 
 And into any of the data collections we have elements that track :
 
@@ -61,7 +61,7 @@ And into any of the data collections we have elements that track :
 
 All as shown in following images:
 
-<p align="center"><image width="1624" height="951" src="images/screen-002.png"></p><br/>
+<p align="center"><image width="946" height="554" src="images/screen-002.PNG"></p><br/>
 
 
 
