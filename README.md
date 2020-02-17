@@ -109,7 +109,7 @@ Enjoy tour journey in Spring Cloud Dataflow Framework.
 ## Coming soon
 
 Upcoming branch with a compose whicb main news are Spring Cloud Dataflow Server and the Spring Cloud Skipper Server you can scale as you can with you system resources and you will be able to scale individually for the 3 microservices, registered in5o the Server via catalogue (source, process and sink). 
-We will provide as well the 3 analytics microservices with some automation on the definition and recognition of model types, indexes, and some new spatial concepts. Autoplacing indexes required by the analy5ics nodes, via model databdatabase (missing in this release).
+We will provide as well the 3 analytics microservices with some automation on the definition and recognition of model types, indexes, and some new spatial concepts. Autoplacing indexes required by the analytics nodes, via model databdatabase (missing in this release).
 We will use another streaming engine to push data in the metadata sourcing and used to pushback responses from the analytics sink.
 So let's get ready for a more intensive experience on the dataflow universe ...
 
