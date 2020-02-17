@@ -6,9 +6,9 @@
 # Flow Centric PoC
 
 
-Unknown Structure Stream flows PoC project. Goal is to give Proof of Concept for Stream Data Meaning and Recognizing base on complex JSON data model, based on Spring DataFlow technology.
+Complex json structures coming from different sources? We want to fix your problem. Take a look to get inspired!!!
 
-## What we want fix?
+
 
 You have small but complex data, and you want easily get ready for any analytics tools with less burn down
 and expenses possible. So we tried at the end the use of BSON library and the Spring Cloud Dataflow framework, for running a 'continuous streaming'...
