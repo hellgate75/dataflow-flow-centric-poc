@@ -93,6 +93,16 @@ It provides some profiles:
 
 
 
+## Test locally without build the code
+
+
+We provide a docker compose to simulate base environment.
+
+Please visit folder [scripts](/scripts)
+
+Information about docker compose [here](https://docs.docker.com/compose/install/) and command line reference [here](https://docs.docker.com/compose/reference/overview/). 
+
+
 
 ## License
 

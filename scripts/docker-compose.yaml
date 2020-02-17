@@ -13,26 +13,24 @@ services:
     - "15672"
     - "5672"
     ports:
-    - "4369:4369"
-    - "5671:5671"
-    - "25672:25672"
     - "9082:15672"
-    - "9672:5672"
     volumes:
     - volume_rabbitmq:/var/lib/rabbitmq
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "rabbitmq.flowcentric:172.16.238.82"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.82
         ipv6_address: 2001:3984:3989::82
- #   links:
-    restart: "always"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-sSL", "http://localhost:15672/", "-o", "/var/lib/rabbitmq/healthcheck"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   mongodb:
     image: mongo:3.6.17-xenial
@@ -48,17 +46,19 @@ services:
     - volume_config_mongodb:/data/configdb
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "mongodb.flowcentric:172.16.238.83"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.83
         ipv6_address: 2001:3984:3989::83
- #   links:
-    restart: "always"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: "bash -c \"if mongo --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'; then exit 0; fi; exit 1\";"
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   h2db:
     image: hellgate75/h2-database:2019.10.14
@@ -68,7 +68,7 @@ services:
     - H2_ENABLE_WEB=true
     - H2_ENABLE_INSECURE=true
     - H2_ENABLE_SECURE=false
-    - H2_DATA_GIT_URL="git@github.com:hellgate75/dataflow-flow-centric-config.git|/data"
+    - H2_DATA_GIT_URL=git@github.com:hellgate75/dataflow-flow-centric-config.git|/data
     expose:
     - "9090"
     - "65123"
@@ -79,23 +79,26 @@ services:
     - volume_h2_data:/var/h2-database/data
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "h2.flowcentric:172.16.238.84"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.84
         ipv6_address: 2001:3984:3989::84
- #   links:
-    restart: "always"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-L", "http://localhost:9090", "-o", "/var/h2-database/healthcheck"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   config_server:
     image: hellgate75/spring-cloud-config-server:1.0.0-flow-centric
     container_name: config-server-flow-centric-compose
     environment:
     - HOSTNAME=configserver.flowcentric
+    - SHUTDOWN_ON_JVM_EXIT=true
     expose:
     - "8888"
     ports:
@@ -104,23 +107,33 @@ services:
     - volume_ms_logs:/opt/dataflow-flow-centric/log
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "configserver.flowcentric:172.16.238.85"
+    extra_hosts:
+    - "rabbitmq.flowcentric:172.16.238.82"
+    - "mongodb.flowcentric:172.16.238.83"
+    - "h2.flowcentric:172.16.238.84"
+    - "rabbitmq:172.16.238.82"
+    - "mongodb:172.16.238.83"
+    - "h2:172.16.238.84"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.85
         ipv6_address: 2001:3984:3989::85
- #   links:
-    restart: "always"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-L", "http://localhost:8888/dataflow-ms-flow-centric-source-poc/source-compose", "-o", "/opt/dataflow-flow-centric/log/healthcheck-config-server"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   source_server:
     image: hellgate75/spring-cloud-dataflow-source-server:1.0.0-flow-centric
     container_name: source-server-flow-centric-compose
     environment:
     - HOSTNAME=sourceserver.flowcentric
+    - SHUTDOWN_ON_JVM_EXIT=true
     expose:
     - "8996"
     ports:
@@ -129,31 +142,39 @@ services:
     - volume_ms_logs:/opt/dataflow-flow-centric/log
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "sourceserver.flowcentric:172.16.238.86"
+    extra_hosts:
+    - "rabbitmq.flowcentric:172.16.238.82"
+    - "mongodb.flowcentric:172.16.238.83"
+    - "h2.flowcentric:172.16.238.84"
+    - "configserver.flowcentric:172.16.238.85"
+    - "rabbitmq:172.16.238.82"
+    - "mongodb:172.16.238.83"
+    - "h2:172.16.238.84"
+    - "configserver:172.16.238.85"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.86
         ipv6_address: 2001:3984:3989::86
-    links:
-    - "rabbitmq"
-    - "mongodb"
-    - "h2db"
-    - "config_server"
     depends_on:
     - "rabbitmq"
     - "h2db"
     - "config_server"
-    restart: "no"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-H", "\"Content-Type: application/json\"", "-d", "'{\"token\": \"xxxx\"}'", "-L", "http://localhost:8996/ping", "-o", "/opt/dataflow-flow-centric/log/healthcheck-source-ms"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   processor_server:
     image: hellgate75/spring-cloud-dataflow-processor-server:1.0.0-flow-centric
     container_name: processor-server-flow-centric-compose
     environment:
     - HOSTNAME=processorserver.flowcentric
+    - SHUTDOWN_ON_JVM_EXIT=true
     expose:
     - "8997"
     ports:
@@ -162,32 +183,40 @@ services:
     - volume_ms_logs:/opt/dataflow-flow-centric/log
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "processorserver.flowcentric:172.16.238.87"
+    extra_hosts:
+    - "rabbitmq.flowcentric:172.16.238.82"
+    - "mongodb.flowcentric:172.16.238.83"
+    - "h2.flowcentric:172.16.238.84"
+    - "configserver.flowcentric:172.16.238.85"
+    - "rabbitmq:172.16.238.82"
+    - "mongodb:172.16.238.83"
+    - "h2:172.16.238.84"
+    - "configserver:172.16.238.85"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.87
         ipv6_address: 2001:3984:3989::87
-    links:
-    - "rabbitmq"
-    - "mongodb"
-    - "h2db"
-    - "config_server"
     depends_on:
     - "rabbitmq"
     - "mongodb"
     - "h2db"
     - "config_server"
-    restart: "no"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-H", "\"Content-Type: application/json\"", "-d", "'{\"token\": \"xxxx\"}'", "-L", "http://localhost:8997/ping", "-o", "/opt/dataflow-flow-centric/log/healthcheck-processor-ms"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
   sink_server:
     image: hellgate75/spring-cloud-dataflow-sink-server:1.0.0-flow-centric
     container_name: sink-server-flow-centric-compose
     environment:
     - HOSTNAME=sinkserver.flowcentric
+    - SHUTDOWN_ON_JVM_EXIT=true
     expose:
     - "8998"
     ports:
@@ -196,26 +225,33 @@ services:
     - volume_ms_logs:/opt/dataflow-flow-centric/log
     cap_add:
     - ALL
-#    extra_hosts:
-#    - "sinkserver.flowcentric:172.16.238.87"
+    extra_hosts:
+    - "rabbitmq.flowcentric:172.16.238.82"
+    - "mongodb.flowcentric:172.16.238.83"
+    - "h2.flowcentric:172.16.238.84"
+    - "configserver.flowcentric:172.16.238.85"
+    - "rabbitmq:172.16.238.82"
+    - "mongodb:172.16.238.83"
+    - "h2:172.16.238.84"
+    - "configserver:172.16.238.85"
     networks:
       frontend:
       backend:
         ipv4_address: 172.16.238.88
         ipv6_address: 2001:3984:3989::88
-    links:
-    - "rabbitmq"
-    - "mongodb"
-    - "h2db"
-    - "config_server"
     depends_on:
     - "rabbitmq"
     - "mongodb"
     - "h2db"
     - "config_server"
-    restart: "no"
+    restart: "unless-stopped"
+    tty: true
     healthcheck:
-      disable: true
+      test: ["CMD", "curl", "-H", "\"Content-Type: application/json\"", "-d", "'{\"token\": \"xxxx\"}'", "-L", "http://localhost:8998/ping", "-o", "/opt/dataflow-flow-centric/log/healthcheck-sink-ms"]
+      interval: 120s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
 
 volumes:
   volume_rabbitmq:
