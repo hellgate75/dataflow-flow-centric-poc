@@ -23,8 +23,7 @@ In a real world we should provide at least a similar architecture:
 <p align="center"><image width="‭946‬" height="535" src="images/arch-001.PNG"></p><br/>
 
 
-As a Poc we can start providing in a single Maven project, the following subset of the
-minimum viable architecture, as shown next:
+As a Poc we can start providing in a single Maven project, all we can provide it's just a small subset of the minimum viable architecture, as shown here:
 
 <p align="center"><image width="‭946‬" height="532" src="images/arch-002.PNG"></p><br/>
 
