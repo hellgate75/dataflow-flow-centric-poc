@@ -168,7 +168,7 @@ public class FlowCentricProcessService implements IFlowCentricService<String, Pr
 				BsonDocument document = bsonMetadata.asDocument();
 				Codec<Document> codec = db.getCodecRegistry().get(Document.class);
 				Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
-				mongoDocument.put("_object_model", inputDataRequest.getModelType());
+				mongoDocument.put("__object_model", inputDataRequest.getModelType());
 				mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, bsonMetadataCollection, mongoDocument);
 				BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
 				Optional<String> metaIdOpt = myDocument.entrySet()

@@ -145,12 +145,12 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 				if ( ! collections.contains(collectionName) ) {
 					BsonHelper.createMongoDbCollection(mongoClient, db, collectionName);
 				}
-				document.putIfAbsent("__bason_metatada_id", new BsonString(inputData.getBsonMetadataId()));
-				document.putIfAbsent("__bason_metatada_collection", new BsonString(inputData.getBsonMetadataCollection()) );
+				document.putIfAbsent("__bson_metatada_id", new BsonString(inputData.getBsonMetadataId()));
+				document.putIfAbsent("__bson_metatada_collection", new BsonString(inputData.getBsonMetadataCollection()) );
 				Codec<Document> codec = db.getCodecRegistry().get(Document.class);
 				Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
-				mongoDocument.put("_object_model", inputData.getModelType());
-				mongoDocument.put("_object_index", inputData.getIndex());
+				mongoDocument.put("__bson_model", inputData.getModelType());
+				mongoDocument.put("__bson_index", inputData.getIndex());
 				mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, collectionName, mongoDocument);
 				BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
 				Optional<String> mongoObjIdOpt = myDocument.entrySet()
@@ -177,6 +177,7 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 				if ( mongoObjIdOpt.isPresent() ) {
 					mongoDocumentId = mongoObjIdOpt.get(); 
 				}
+				BsonHelper.createMongoDbIndex(mongoClient, db, collectionName, "__bson_index", inputData.getIndex());
 			}
 			updateSuccess(flowId, flowInputData, flowProcessData);
 			return new SinkDataElement(flowId, processId, modelType, document, 

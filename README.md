@@ -3,10 +3,87 @@
 <p align="right"><img src="https://travis-ci.org/hellgate75/flow-centric-poc.svg?branch=master" alt="trevis-ci" width="98" height="20" />&nbsp;<a href="https://travis-ci.org/hellgate75/flow-centric-poc">Check last build on Travis-CI</a></p><br/>
 <br/>
 
-# Flow-Centric PoC
+# Flow Centric PoC
 
 
 Unknown Structure Stream flows PoC project. Goal is to give Proof of Concept for Stream Data Meaning and Recognizing base on complex JSON data model, based on Spring DataFlow technology.
+
+## What we want fix?
+
+You have small but complex data, and you want easily get ready for any analytics tools with less burn down
+and expenses possible. So we tried at the end the use of BSON library and the Spring Cloud Dataflow framework, for running a 'continuous streaming'...
+
+
+
+## First level PoC development.
+
+Here a sample architecture.
+
+
+
+## Results
+
+In the MongoDb instance you can find the flow-centric database.
+
+ 
+<p align="center"><image width="1273" height="896" src="images/screen-004.png"></p><br/>
+
+
+
+After a cycle of data streaming we have two MongDb collections per each category. 
+
+
+ 
+<p align="center"><image width="1262" height="891" src="images/screen-006.png"></p><br/>
+
+
+Into data collections we can find some ready indexes:
+
+
+ 
+<p align="center"><image width="1261" height="894" src="images/screen-007.png"></p><br/>
+
+
+
+Here how MongDb collections appears.
+
+<p align="center"><image width="1264" height="834" src="images/screen-001.png"></p><br/>
+
+And into any of the data collections we have elements that track :
+
+* metadata partition
+
+* metadata document id
+
+* index
+
+* model name
+
+All as shown in following images:
+
+<p align="center"><image width="1624" height="951" src="images/screen-002.png"></p><br/>
+
+
+
+
+## Spring Cloud Configuration
+
+The Spring Cloud Config server takes the configuration from a specific repository, as follows:
+
+* [dataflow-flow-centric-config](https://github.com/hellgate75/dataflow-flow-centric-config)
+
+
+It provides some profiles:
+
+* dev (source_dev, process_dev, sink_dev)
+
+* compose (source_compose, process_compose, sink_compose)
+
+* kubernetes (source_kubernetes, process_kubernetes, sink_kubernetes)
+
+* local (not ready) 
+
+
 
 
 ## License

@@ -9,6 +9,7 @@ import java.util.List;
 import org.bson.BsonDocument;
 import org.bson.Document;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoClientSettings.Builder;
@@ -17,6 +18,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 
 /**
  * @author Fabrizio Torelli (hellgate75@gmail.com)
@@ -100,6 +102,25 @@ public final class BsonHelper {
 			if ( countdown > 0 ) {
 				db = mongoClient.getDatabase(db.getName());
 				return createMongoDbCollection(mongoClient, db, collectionName, countdown -1);
+			}
+		}
+		return  db.getCollection(collectionName);
+	}
+	
+	public static final MongoCollection<Document> createMongoDbIndex(MongoClient mongoClient, MongoDatabase db, String collectionName, String indexField, String indexValue) {
+		return createMongoDbIndex(mongoClient, db, collectionName, indexField, indexValue, MAX_RETRY);
+	}
+	
+	private static final MongoCollection<Document> createMongoDbIndex(MongoClient mongoClient, MongoDatabase db, String collectionName, String indexField, String indexValue, long countdown) {
+		
+		try {
+			
+			db.getCollection(collectionName).createIndex(new BasicDBObject(indexField, indexValue), new IndexOptions().name(indexField + "-" + System.nanoTime()).background(true));
+			
+		} catch (Exception e) {
+			if ( countdown > 0 ) {
+				db = mongoClient.getDatabase(db.getName());
+				return createMongoDbIndex(mongoClient, db, collectionName, indexField, indexValue, countdown -1);
 			}
 		}
 		return  db.getCollection(collectionName);
