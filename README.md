@@ -11,7 +11,7 @@ Unknown Structure Stream flows PoC project. Goal is to give Proof of Concept for
 
 ## License
 
-The library is licensed with [CCL v. 1.0](/LICENSE) clauses, with prior authorization of author before any production or commercial use. Use of this library or any extension is prohibited due to high risk of damages due to improper use. No warranty is provided for improper or unauthorized use of this library or any implementation.
+The library is licensed with [CC0 v. 1.0](/LICENSE) clauses, with prior authorization of author before any production or commercial use. Use of this library or any extension is prohibited due to high risk of damages due to improper use. No warranty is provided for improper or unauthorized use of this library or any implementation.
 
 Any request can be prompted to the author [Fabrizio Torelli](https://www.linkedin.com/in/fabriziotorelli) at the follwoing email address:
 
