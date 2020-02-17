@@ -17,7 +17,16 @@ and expenses possible. So we tried at the end the use of BSON library and the Sp
 
 ## First level PoC development.
 
-Here a sample architecture.
+In a real world we should provide at least a similar architecture:
+
+
+<p align="center"><image width="‭946‬" height="535" src="images/arch-001.PNG"></p><br/>
+
+
+As a Poc we can start providing in a single Maven project, the following subset of the
+minimum viable architecture, as following shown:
+
+<p align="center"><image width="‭946‬" height="532" src="images/arch-002.PNG"></p><br/>
 
 
 
