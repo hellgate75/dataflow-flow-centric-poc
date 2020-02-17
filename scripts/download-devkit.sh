@@ -18,12 +18,11 @@ function download_install() {
 	install "$1" "$DIR"
 }
 
-download_install "docker.zip"
+if [ -e ./dev-kit.zip ]; then
+     install "dev-kit" "$DIR"
+else
+     download_install "scripts.zip"
+fi
 
-download_install "utils.zip"
-
-download_install "docker-src.zip"
-
-download_install "scripts.zip"
 
 mkdir -p $DIR/tmp
