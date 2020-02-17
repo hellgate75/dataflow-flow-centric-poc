@@ -93,7 +93,7 @@ It provides some profiles:
 
 
 
-## Test locally without build the code
+## Test locally without building the code
 
 
 We provide a docker compose to simulate base environment.
