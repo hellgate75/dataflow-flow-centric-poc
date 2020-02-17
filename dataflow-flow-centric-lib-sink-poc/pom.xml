@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>dataflow-flow-centric-lib-sink-poc</artifactId>
-	<name>Foundation Library for Flow Centric PoC Framework</name>
-	<description>Dataflow Flow Centric PoC Library</description>
+	<name>MongoDb Foundation Library for Flow Centric PoC Framework</name>
+	<description>MongoDb Dataflow Flow Centric PoC Library</description>
 	<packaging>jar</packaging>
 
   <parent>
@@ -43,7 +43,6 @@
 		<dependency>
 		    <groupId>org.springframework.data</groupId>
 		    <artifactId>spring-data-releasetrain</artifactId>
-		    <version>Lovelace-SR9</version>
 		    <type>pom</type>
 		    <scope>import</scope>
 		</dependency>

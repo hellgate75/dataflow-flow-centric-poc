@@ -251,4 +251,10 @@ public class GenericHelper {
 		return BsonDocument.parse(text);
 	}
 	
+	public static final void thowRuntimeException(String message, Exception... ex) {
+		if ( ex.length == 0 )
+			throw new RuntimeException(message);
+		else 
+			throw new RuntimeException(message, ex[0]);
+	}
 }

@@ -50,16 +50,21 @@ public class FlowCentricSourceStreamController {
 						requiresReply = "true",
 						autoStartup = "true", 
 						async = "true")
-	public SourceDataElement interceptSourceDataFlowRowEntity(String inputData) {
+	public String interceptSourceDataFlowRowEntity(String inputText) {
+		if ( inputText == null || inputText.trim().isEmpty()) {
+			return "";
+		}
 		Long streamId = null;
 		try {
 			String type = "";
-//			inputData = JMSHelper.gUnzip(inputData.getBytes());
-			FlowInputData data = flowCentricConfig.createAndSaveNewFlowInputData(flowInputDataRepository,inputData, type);
-			streamId = data.getId();
-			return flowCentricSourceService.computeStreamData(data.getId(), type, inputData);
+				String convertedData = inputText;
+//				inputData = JMSHelper.gUnzip(inputData.getBytes());
+				FlowInputData data = flowCentricConfig.createAndSaveNewFlowInputData(flowInputDataRepository, convertedData, type);
+				streamId = data.getId();
+				SourceDataElement response = flowCentricSourceService.computeStreamData(data.getId(), type, convertedData);
+				return response.toJson();
 		} catch (IOFlowException e) {
-			String message = String.format("Unable to process Input Data for Stream Data Processing Service -> error message: (%s) -> %s, data = %s", e.getClass().getName(), e.getMessage(), inputData);
+			String message = String.format("Unable to process Input Data for Stream Data Processing Service -> error message: (%s) -> %s, data = %s", e.getClass().getName(), e.getMessage(), inputText);
 			LoggerHelper.logError(vlfLogger, "FlowCentricSourceStreamController::computeStreamData", message, Category.BUSINESS_ERROR, e);
 			if ( streamId != null ) {
 				// Some operations written into the operational Database. 
@@ -76,7 +81,7 @@ public class FlowCentricSourceStreamController {
 			}
 			// Null responses are rejected and a log will be automatically written by SpringDataflow
 			// We can even write a message handler, in order to manage by ourselves the event.
-			return null;
+			return "";
 		}
 	}
 

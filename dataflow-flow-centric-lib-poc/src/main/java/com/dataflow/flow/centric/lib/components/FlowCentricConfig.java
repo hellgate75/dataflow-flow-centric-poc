@@ -53,8 +53,8 @@ public class FlowCentricConfig {
 	 * @param type
 	 * @return
 	 */
-	public FlowProcessData createAndSaveNewFlowProcessData(FlowProcessDataRepository flowProcessDataRepository, FlowInputData inputData, String collection, String metadata) {
-		FlowProcessData flowProcessData = new FlowProcessData(null, inputData.getId(), collection);
+	public FlowProcessData createAndSaveNewFlowProcessData(FlowProcessDataRepository flowProcessDataRepository, Long flowId, String collection, String metadata) {
+		FlowProcessData flowProcessData = new FlowProcessData(null, flowId, collection);
 		flowProcessData.setInputText(HQLHelper.newClobFromText(metadata));
 		return HQLHelper.saveAndRetryFlowProcessDataEntity(flowProcessDataRepository, flowProcessData, vlfLogger);
 	}

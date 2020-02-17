@@ -16,14 +16,14 @@ import com.dataflow.flow.centric.lib.session.FlowCentricResponse;
  * Defines the interface for the Merge Layer Source service.
  *
  */
-public interface MergeLayerSinkResource {
+public interface FlowCentricSinkResource {
 	
 	/**
-	 * @param mergeLayerRequest
+	 * @param flowCentricRequest
 	 * @param request
 	 * @return
 	 */
-	ResponseEntity<FlowCentricResponse> ping(@RequestBody FlowCentricRequest mergeLayerRequest, 
+	ResponseEntity<FlowCentricResponse> ping(@RequestBody FlowCentricRequest flowCentricRequest, 
 		    HttpServletRequest request);
 	
 

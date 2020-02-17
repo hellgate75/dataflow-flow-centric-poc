@@ -67,7 +67,6 @@ public class FlowCentricProcessResourceImpl implements FlowCentricProcessResourc
 			flowCentricResponse = new FlowCentricResponse(HttpStatus.UNAUTHORIZED.name(), "401", "Unauthorized");
 			flowCentricResponse.setResponseMessage("Unauthorized Access to the REST endpoint.");
 			return new ResponseEntity<>(flowCentricResponse, HttpStatus.OK);
-//			return new ResponseEntity<>(mergeLayerResponse, HttpStatus.UNAUTHORIZED);
 		}
 		try {
 			AtomicInteger counter = new AtomicInteger(0);

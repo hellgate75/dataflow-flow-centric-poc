@@ -25,7 +25,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EntityScan("com.dataflow.*")
 @EnableAutoConfiguration(exclude = {ErrorMvcAutoConfiguration.class, WebMvcAutoConfiguration.class, MongoAutoConfiguration.class})
 @RefreshScope
-@ComponentScan(lazyInit = true,value={"com.dataflow.core.*","com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.ms.sink.*" })
+@ComponentScan(value={"com.dataflow.core.*","com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.lib.*", "com.dataflow.flow.centric.ms.sink.*" })
 public class FlowCentricSinkApplication {
 	/**
 	 * This method is responsible for boot the application

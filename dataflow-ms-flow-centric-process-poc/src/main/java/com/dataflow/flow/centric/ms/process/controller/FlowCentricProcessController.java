@@ -14,12 +14,10 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Processor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.dataflow.core.lib.logger.VlfLogger;
 import com.dataflow.core.lib.logger.VlfLogger.Category;
@@ -43,8 +41,7 @@ import com.dataflow.flow.centric.lib.stream.listener.IThreadMonitor;
  *
  */
 @Configuration
-@EnableJpaRepositories
-@EnableTransactionManagement
+@EnableJpaRepositories(basePackageClasses = {FlowInputDataRepository.class, FlowProcessDataRepository.class})
 @EnableBinding(Processor.class)
 public class FlowCentricProcessController implements IThreadMonitor {
 
@@ -114,54 +111,66 @@ public class FlowCentricProcessController implements IThreadMonitor {
 			requiresReply = "true",
 			autoStartup = "true", 
 			async = "true")
-	@StreamListener(Processor.INPUT)
-	public ProcessedDataElement processSourceData(SourceDataElement inputData) {
-		if ( inputData == null ) {
+	public String processSourceData(String inputText) {
+		if ( inputText == null || inputText.trim().isEmpty() ) {
 			return null;
 		}
 		Long flowId = 0l;
 		String templateName = "";
 		Long processId = 0l;
-		FlowInputData flowInputData = null;
 		FlowProcessData flowProcessData = null;
 		UUID threadUUID = null ;
 		try {
+			SourceDataElement inputData = SourceDataElement.fromJson(inputText);
 			flowId = inputData.getFlowId();
-			flowInputData = HQLHelper.loadFlowInputDataEntity(flowInputDataRepository, flowId);
 			String collection = "";
-			flowProcessData = flowCentricConfig.createAndSaveNewFlowProcessData(flowProcessDataRepository, flowInputData, collection, null);
-			if ( flowProcessData != null )
+			LoggerHelper.logInfo(vlfLogger, "FlowCentricProcessController::processSourceData", "Read new source element: " + inputData);
+			flowProcessData = flowCentricConfig.createAndSaveNewFlowProcessData(flowProcessDataRepository, flowId, collection, null);
+			if ( flowProcessData != null ) {
 				threadUUID = threadStarted(ProcessType.PROCESS, "FlowCentricProcessSourceData-"+UUID.randomUUID().toString(), flowProcessData.getId(), "FlowCentricProcessSourceData-" + UUID.randomUUID().toString(), 0);
+				LoggerHelper.logInfo(vlfLogger, "FlowCentricProcessController::processSourceData", "Generated new process data element: " + flowProcessData);
+			}
+			else
+				LoggerHelper.logWarning(vlfLogger, "FlowCentricProcessController::processSourceData", "Unable to generate new process data: continue without process monitoring!!", null);
 			templateName = inputData.getModelType();
 			processId=flowProcessData.getId();
-			return flowCentricProcessService.computeStreamData(flowId, templateName, inputData.getBsonObject().toJson(), inputData, flowProcessData);
+			ProcessedDataElement response = flowCentricProcessService.computeStreamData(flowId, templateName, inputData.getBsonObject().toJson(), inputData, flowProcessData);
+			markFlowAndProcessAsSuccess(flowId);
+			return response.toJson();
 		} catch (Exception e) {
-			String errorMessage = String.format("Error dunring computing source data from the request: %s",
-					""+inputData);
+			String errorMessage = String.format("Error dunring computing source data from the request body: %s",
+					""+inputText);
 			LoggerHelper.logError(vlfLogger, "FlowCentricProcessController::processSourceData", errorMessage, Category.BUSINESS_ERROR, e);
 			if ( processId >0 && processId > 0 ) {
-				markFlowAndProcessAsFailed(flowInputData, flowProcessData, flowId);
+				markFlowAndProcessAsFailed(flowProcessData, flowId);
 			}
-			return null;
 		} finally {
 			threadStopped(threadUUID);
 		}
+		return null;
 	}
 	
-	private void markFlowAndProcessAsFailed(FlowInputData flowInputData, FlowProcessData flowProcessData, Long flowId) {
-		if ( flowInputData == null && flowId > 0 ) {
-			flowInputData =  HQLHelper.loadFlowInputDataEntity(flowInputDataRepository, flowId);
+	private void markFlowAndProcessAsSuccess(Long flowId) {
+		if ( flowId > 0 ) {
+			FlowInputData flowInputData =  HQLHelper.loadFlowInputDataEntity(flowInputDataRepository, flowId);
+			if ( flowInputData != null ) {
+				flowInputData.setSinked(false);
+				flowInputData.setProcessed(true);
+				flowInputData.setClosed(false);
+				HQLHelper.saveAndRetryFlowInputDataEntity(flowInputDataRepository, flowInputData, vlfLogger);
+			}
+		}
+	}
+	
+	private void markFlowAndProcessAsFailed(FlowProcessData flowProcessData, Long flowId) {
+		if ( flowId > 0 ) {
+			FlowInputData flowInputData =  HQLHelper.loadFlowInputDataEntity(flowInputDataRepository, flowId);
 			if ( flowInputData != null ) {
 				flowInputData.setSinked(false);
 				flowInputData.setProcessed(false);
 				flowInputData.setClosed(true);
 				HQLHelper.saveAndRetryFlowInputDataEntity(flowInputDataRepository, flowInputData, vlfLogger);
 			}
-		} else if ( flowInputData != null ) {
-			flowInputData.setSinked(false);
-			flowInputData.setProcessed(false);
-			flowInputData.setClosed(true);
-			HQLHelper.saveAndRetryFlowInputDataEntity(flowInputDataRepository, flowInputData, vlfLogger);
 		}
 		if ( flowProcessData != null ) {
 			flowProcessData.setClosed(true);

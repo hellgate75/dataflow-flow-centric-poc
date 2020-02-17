@@ -50,20 +50,20 @@ CREATE TABLE IF NOT EXISTS TBL_FLOW_PROCESS_DATA (
 	@Column(name = "metadata", nullable = true)
 	private Clob metadata;
 
-	@Column(name = "collection")
+	@Column(name = "collection", nullable = true)
 	private String collectionName;
 	
-	@Column(name = "closed")
+	@Column(name = "closed", nullable = true)
 	private Boolean closed;
 	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_ts")
+	@Column(name = "created_ts", nullable = true)
 	private Date createdTs;
 	
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_ts")
+	@Column(name = "updated_ts", nullable = true)
 	private Date updatedTs;
 
 	/**
@@ -92,6 +92,7 @@ CREATE TABLE IF NOT EXISTS TBL_FLOW_PROCESS_DATA (
 		this.collectionName = collectionName;
 		this.createdTs = null;
 		this.updatedTs = null;
+		this.closed = false;
 	}
 
 
@@ -118,12 +119,7 @@ CREATE TABLE IF NOT EXISTS TBL_FLOW_PROCESS_DATA (
 	 */
 	public FlowProcessData(Long id, Long inputId, Clob inputText, Clob metadata, String collectionName, Date createdTs,
 			Date updatedTs) {
-		super();
-		this.id = id;
-		this.inputId = inputId;
-		this.inputText = inputText;
-		this.metadata = metadata;
-		this.collectionName = collectionName;
+		this(id, inputId, inputText, metadata, collectionName);
 		this.createdTs = createdTs;
 		this.updatedTs = updatedTs;
 	}

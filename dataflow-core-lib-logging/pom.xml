@@ -3,6 +3,8 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.dataflow.core.lib</groupId>
 	<artifactId>dataflow-core-lib-logging</artifactId>
+  	<name>Foundation Logging Library for Flow Centric PoC Framework</name>
+  	<description>Foundation Logging Library for Flow Centric PoC Framework</description>
 	<version>${dataflow-core.version}</version>
 
 	<parent>

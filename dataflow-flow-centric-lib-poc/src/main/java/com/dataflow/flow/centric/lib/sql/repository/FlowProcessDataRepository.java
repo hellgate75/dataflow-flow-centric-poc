@@ -1,6 +1,7 @@
 package com.dataflow.flow.centric.lib.sql.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -15,5 +16,8 @@ public interface FlowProcessDataRepository extends CrudRepository<FlowProcessDat
 
 	@Query(HQLConstants.SELECT_ALL_CLOSED_FLOW_PROCESS)
 	public List<FlowProcessData> getAllClosedFlowProcessData();
+
+	@Query(HQLConstants.SELECT_ONE_FLOW_PROCESS)
+	public Optional<FlowProcessData>  selectOne(Long id);
 
 }

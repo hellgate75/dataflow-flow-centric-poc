@@ -38,23 +38,23 @@ public class FlowInputData {
 	@Column(name = "input_text", nullable = true)
 	private Clob inputText;
 	
-	@Column(name = "processed")
+	@Column(name = "processed", nullable = true)
 	private Boolean processed;
 	
-	@Column(name = "sinked")
+	@Column(name = "sinked", nullable = true)
 	private Boolean sinked;
 	
-	@Column(name = "closed")
+	@Column(name = "closed", nullable = true)
 	private Boolean closed;
 	
 	@CreationTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "created_ts")
+	@Column(name = "created_ts", nullable = true)
 	private Date createdTs;
 	
 	@UpdateTimestamp
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "updated_ts")
+	@Column(name = "updated_ts", nullable = true)
 	private Date updatedTs;
 
 	/**
@@ -81,6 +81,7 @@ public class FlowInputData {
 		this.inputText = inputText;
 		this.processed = processed;
 		this.sinked = sinked;
+		this.closed = false;
 		this.createdTs = null;
 		this.updatedTs = null;
 	}

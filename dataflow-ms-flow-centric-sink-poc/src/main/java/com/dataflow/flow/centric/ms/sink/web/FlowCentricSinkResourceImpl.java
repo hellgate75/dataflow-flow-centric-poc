@@ -33,7 +33,7 @@ import com.dataflow.flow.centric.ms.sink.controller.FlowCentricSinkController;
 @Configuration
 @RestController
 @RequestMapping("/")
-public class MergeLayerSinkResourceImpl implements MergeLayerSinkResource {
+public class FlowCentricSinkResourceImpl implements FlowCentricSinkResource {
 	
 	@Autowired
 	private RequestValidator requestValidator;
@@ -44,9 +44,9 @@ public class MergeLayerSinkResourceImpl implements MergeLayerSinkResource {
 	@Autowired
 	private VlfLogger vlfLogger;
 
-	final String[] ALLOWED_FIELDS = new String[] { "mergeLayerRequest.clientName",
-			"mergeLayerRequest.userId", "mergeLayerRequest.clientHost", "mergeLayerRequest.token", 
-			"mergeLayerRequest.action", "mergeLayerRequest.parameters"};
+	final String[] ALLOWED_FIELDS = new String[] { "flowCentricRequest.clientName",
+			"flowCentricRequest.userId", "flowCentricRequest.clientHost", "flowCentricRequest.token", 
+			"flowCentricRequest.action", "flowCentricRequest.parameters"};
 
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -56,18 +56,18 @@ public class MergeLayerSinkResourceImpl implements MergeLayerSinkResource {
 	@Override
 	@RequestMapping(value = "/ping", method = RequestMethod.POST, consumes = { "application/json" }, produces = {
 			"application/json" })
-	public ResponseEntity<FlowCentricResponse> ping(@RequestBody FlowCentricRequest mergeLayerRequest,
+	public ResponseEntity<FlowCentricResponse> ping(@RequestBody FlowCentricRequest flowCentricRequest,
 													HttpServletRequest request) {
 		vlfLogger.write(LoggerConstants.SINKSVCID, LoggerConstants.LOG_OPERATION_PING, Severity.INFO,
-				"Service request: " + mergeLayerRequest, LogLevel.INFO);
-		FlowCentricResponse mergeLayerResponse = new FlowCentricResponse(HttpStatus.OK.name(), "200", "SUCCESS");
-		if ( ! requestValidator.validateRequest(mergeLayerRequest, mergeLayerResponse) ) {
+				"Service request: " + flowCentricRequest, LogLevel.INFO);
+		FlowCentricResponse flowCentricResponse = new FlowCentricResponse(HttpStatus.OK.name(), "200", "SUCCESS");
+		if ( ! requestValidator.validateRequest(flowCentricRequest, flowCentricResponse) ) {
 			vlfLogger.write(LoggerConstants.SINKSVCID, LoggerConstants.LOG_OPERATION_PING, Severity.ERROR,
 					"Error : UNAUTHORIZED", LogLevel.ERROR);
-			mergeLayerResponse = new FlowCentricResponse(HttpStatus.UNAUTHORIZED.name(), "401", "Unauthorized");
-			mergeLayerResponse.setResponseMessage("Unauthorized Access to the REST endpoint.");
-			return new ResponseEntity<>(mergeLayerResponse, HttpStatus.OK);
-//			return new ResponseEntity<>(mergeLayerResponse, HttpStatus.UNAUTHORIZED);
+			flowCentricResponse = new FlowCentricResponse(HttpStatus.UNAUTHORIZED.name(), "401", "Unauthorized");
+			flowCentricResponse.setResponseMessage("Unauthorized Access to the REST endpoint.");
+			return new ResponseEntity<>(flowCentricResponse, HttpStatus.OK);
+//			return new ResponseEntity<>(flowCentricResponse, HttpStatus.UNAUTHORIZED);
 		}
 		try {
 			AtomicInteger counter = new AtomicInteger(0);
@@ -79,9 +79,9 @@ public class MergeLayerSinkResourceImpl implements MergeLayerSinkResource {
 					responseMap.putIfAbsent("Active " + type.name() + " processes.", "" + size);
 					counter.addAndGet(size);
 				} );
-			mergeLayerResponse.setResponseMap(responseMap);
-			mergeLayerResponse.setResponseList(Arrays.asList(new String[] {"Total runnning processes: " + counter.get()}));
-			ResponseEntity<FlowCentricResponse> httpResponse = new ResponseEntity<FlowCentricResponse>(mergeLayerResponse,
+			flowCentricResponse.setResponseMap(responseMap);
+			flowCentricResponse.setResponseList(Arrays.asList(new String[] {"Total runnning processes: " + counter.get()}));
+			ResponseEntity<FlowCentricResponse> httpResponse = new ResponseEntity<FlowCentricResponse>(flowCentricResponse,
 					HttpStatus.OK);
 			vlfLogger.write(LoggerConstants.SINKSVCID, LoggerConstants.LOG_OPERATION_PING, Severity.INFO,
 					"Ping is OK!!", LogLevel.INFO);
@@ -90,9 +90,9 @@ public class MergeLayerSinkResourceImpl implements MergeLayerSinkResource {
 			vlfLogger.write(LoggerConstants.SINKSVCID, LoggerConstants.LOG_OPERATION_PING, Severity.ERROR,
 					"Ping Service - Request generic error -> " + e.getMessage() , LogLevel.ERROR);
 			vlfLogger.write(LoggerConstants.SINKSVCID, Severity.ERROR, e);
-			mergeLayerResponse = new FlowCentricResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(), "500", "Internal Server Error");
-			mergeLayerResponse.setResponseMessage(String.format("Error: <%s> stack: %s", e.getMessage(), GenericHelper.convertStackTrace(e.getStackTrace())));
-			return new ResponseEntity<>(mergeLayerResponse, HttpStatus.OK);
+			flowCentricResponse = new FlowCentricResponse(HttpStatus.INTERNAL_SERVER_ERROR.name(), "500", "Internal Server Error");
+			flowCentricResponse.setResponseMessage(String.format("Error: <%s> stack: %s", e.getMessage(), GenericHelper.convertStackTrace(e.getStackTrace())));
+			return new ResponseEntity<>(flowCentricResponse, HttpStatus.OK);
 //			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}

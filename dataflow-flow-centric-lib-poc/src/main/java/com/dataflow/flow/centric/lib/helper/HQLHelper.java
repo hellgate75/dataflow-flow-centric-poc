@@ -42,8 +42,21 @@ public final class HQLHelper {
 	 * @return
 	 */
 	public static final FlowInputData loadFlowInputDataEntity(FlowInputDataRepository flowInputDataRepository, Long flowId) {
+		return loadFlowInputDataEntity(flowInputDataRepository, flowId, MAX_RETRY_NO);
+	}
+
+	/**
+	 * @param flowInputDataRepository
+	 * @param flowId
+	 * @return
+	 */
+	private static final FlowInputData loadFlowInputDataEntity(FlowInputDataRepository flowInputDataRepository, Long flowId, int countdown) {
 		Optional<FlowInputData> entityOptional = flowInputDataRepository.findById(flowId);
 		if ( ! entityOptional.isPresent() ) {
+			if ( countdown > 0 ) {
+				return loadFlowInputDataEntity(flowInputDataRepository, flowId, countdown-1);
+				
+			}
 			return null;
 		}
 		return entityOptional.get();
@@ -55,8 +68,21 @@ public final class HQLHelper {
 	 * @return
 	 */
 	public static final FlowProcessData loadFlowProcessDataEntity(FlowProcessDataRepository flowProcessDataRepository, Long processId) {
+		return loadFlowProcessDataEntity(flowProcessDataRepository, processId, MAX_RETRY_NO);
+	}
+
+	/**
+	 * @param flowProcessDataRepository
+	 * @param processId
+	 * @return
+	 */
+	private static final FlowProcessData loadFlowProcessDataEntity(FlowProcessDataRepository flowProcessDataRepository, Long processId, int countdown) {
 		Optional<FlowProcessData> entityOptional = flowProcessDataRepository.findById(processId);
 		if ( ! entityOptional.isPresent() ) {
+			if ( countdown > 0 ) {
+				return loadFlowProcessDataEntity(flowProcessDataRepository, processId, countdown-1);
+				
+			}
 			return null;
 		}
 		return entityOptional.get();

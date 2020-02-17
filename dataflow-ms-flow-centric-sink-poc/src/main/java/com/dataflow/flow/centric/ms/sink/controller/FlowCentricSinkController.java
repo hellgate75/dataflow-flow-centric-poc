@@ -14,13 +14,12 @@ import javax.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.stream.annotation.EnableBinding;
-import org.springframework.cloud.stream.annotation.StreamListener;
 import org.springframework.cloud.stream.messaging.Sink;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.GenericMessage;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.dataflow.core.lib.logger.VlfLogger;
 import com.dataflow.core.lib.logger.VlfLogger.Category;
@@ -32,6 +31,7 @@ import com.dataflow.flow.centric.lib.domain.SinkDataElement;
 import com.dataflow.flow.centric.lib.helper.LoggerHelper;
 import com.dataflow.flow.centric.lib.service.IFlowCentricService;
 import com.dataflow.flow.centric.lib.sql.repository.FlowInputDataRepository;
+import com.dataflow.flow.centric.lib.sql.repository.FlowProcessDataRepository;
 import com.dataflow.flow.centric.lib.stream.domain.ProcessType;
 import com.dataflow.flow.centric.lib.stream.listener.IThreadMonitor;
 import com.dataflow.flow.centric.ms.sink.stream.FlowCentricSinkOut;
@@ -41,11 +41,13 @@ import com.dataflow.flow.centric.ms.sink.stream.FlowCentricSinkOut;
  *
  */
 @Configuration
-@EnableJpaRepositories
-@EnableTransactionManagement
+@EnableJpaRepositories(basePackageClasses = {FlowInputDataRepository.class, FlowProcessDataRepository.class})
 @EnableBinding({Sink.class, FlowCentricSinkOut.class})
 public class FlowCentricSinkController implements IThreadMonitor {
 
+	@Value("${dataflow.flow.centric.enable.extrnal.publish}")
+	protected boolean publishOnExternalQueue;
+	
 	public static final Map<ProcessType, ConcurrentHashMap<UUID, String>> THREADS_MAP = new ConcurrentHashMap<>(0);
 	
 	@Autowired
@@ -106,32 +108,44 @@ public class FlowCentricSinkController implements IThreadMonitor {
 		}
 	}
 
-	
-	@StreamListener(Sink.INPUT)
-	public void sinkFlowCentricAndSend(ProcessedDataElement input) {
+	@ServiceActivator(inputChannel=Sink.INPUT,
+			requiresReply = "false",
+			autoStartup = "true", 
+			async = "true")
+	public void sinkFlowCentricAndSend(String inputText) {
+		
 		Long flowId = 0l;
 		Long processId = 0l;
 		UUID threadUUID = null ;
 		try {
+			ProcessedDataElement input = ProcessedDataElement.fromJson(inputText);
 			if ( input != null ) {
 				flowId = input.getFlowId();
 				processId = input.getProcessId();
 			}
 			threadUUID = threadStarted(ProcessType.PROCESS, "FlowCentricSinkProcessedData-"+UUID.randomUUID().toString(), processId, "FlowCentricProcessSourceData-" + UUID.randomUUID().toString(), 0);
 			SinkDataElement sde = flowCentricSinkService.computeStreamData(flowId, input.getModelType(), input);
-			if ( sde != null ) {
-				try {
-					Message<SinkDataElement> message = new GenericMessage<SinkDataElement>(sde);
-					flowCentricSinkOut.output().send(message);
-				} catch (Exception e) {
-					String errorMessage = String.format("Errors dunring message out of sink with body object: %s",
-							"" + sde);
-					LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", errorMessage, e);
+			LoggerHelper.logInfo(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Geenrated Sink data: " + sde);
+			
+			if ( publishOnExternalQueue && flowCentricSinkOut != null && flowCentricSinkOut.output() != null ) {
+				if ( sde != null ) {
+					try {
+						Message<String> message = new GenericMessage<String>(sde.toJson());
+						flowCentricSinkOut.output().send(message);
+					} catch (Exception e) {
+						String errorMessage = String.format("Errors dunring message out of sink with body object: %s",
+								"" + sde);
+						LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", errorMessage, e);
+					}
+				} else {
+					LoggerHelper.logWarning(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Null sinked element, impossoble to semd any message", null);
 				}
+			} else {
+				LoggerHelper.logDebug(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", "Publish to external domain disabled. Not progressing...");
 			}
 		} catch (Exception e) {
-			String errorMessage = String.format("Error dunring sinking processed data body object: %s",
-					"" + input);
+			String errorMessage = String.format("Error dunring sinking processed data body object body: %s",
+					"" + inputText);
 			LoggerHelper.logError(vlfLogger, "FlowCentricSinkController::sinkFlowCentricAndSend", errorMessage, Category.BUSINESS_ERROR, e);
 		} finally {
 			threadStopped(threadUUID);

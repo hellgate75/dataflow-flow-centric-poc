@@ -23,7 +23,7 @@ import com.dataflow.flow.centric.ms.source.utils.JSONGenerationHelper;
  */
 @Component
 @EnableBinding(SourceDataFlowOut.class)
-public class DataGeenrationSchedulingController {
+public class DataGenerationSchedulingController {
 	
 	@Value("${dataflow.flow.centric.model.field.names}")
 	private String bSonModelFields;
@@ -50,12 +50,17 @@ public class DataGeenrationSchedulingController {
 	protected void refreshProcessCommanderServiceList() {
 		BsonDocument bSonDocument = JSONGenerationHelper.generateJSON(bSonModelFields, bSonIndexFields, 3, 3);
 		try {
-			GenericMessage<BsonDocument> message = new GenericMessage<BsonDocument>(bSonDocument);
-			sourceDataFlowOut.output().send(message);
-			LoggerHelper.logInfo(vlfLogger, "DataGeenrationSchedulingController::refreshProcessCommanderServiceList", "Created and sent new message");
+			if ( bSonDocument != null ) {
+				GenericMessage<String> message = new GenericMessage<String>(bSonDocument.toJson());
+				sourceDataFlowOut.output().send(message);
+				LoggerHelper.logInfo(vlfLogger, "DataGenerationSchedulingController::refreshProcessCommanderServiceList", "Created and sent new message");
+			} else {
+				LoggerHelper.logWarning(vlfLogger, "DataGenerationSchedulingController::refreshProcessCommanderServiceList", "Null message parsed from generator", null);
+				
+			}
 		} catch (Exception e) {
 			String message = String.format("Unable to execute send data for Stream Data Sourcing -> error (%s) message: %s -> input : %s", e.getClass().getName(), e.getMessage(), bSonDocument.toString());
-			LoggerHelper.logError(vlfLogger, "DataGeenrationSchedulingController::refreshProcessCommanderServiceList", message, Category.BUSINESS_ERROR, e);
+			LoggerHelper.logError(vlfLogger, "DataGenerationSchedulingController::refreshProcessCommanderServiceList", message, Category.BUSINESS_ERROR, e);
 		}
 	}
 

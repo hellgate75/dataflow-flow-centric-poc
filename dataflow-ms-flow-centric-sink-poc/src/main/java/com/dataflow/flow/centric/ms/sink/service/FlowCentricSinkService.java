@@ -6,22 +6,26 @@ package com.dataflow.flow.centric.ms.sink.service;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.bson.BsonDocument;
+import org.bson.BsonString;
+import org.bson.BsonType;
+import org.bson.BsonValue;
 import org.bson.Document;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Component;
 
 import com.dataflow.core.lib.logger.VlfLogger;
+import com.dataflow.core.lib.logger.VlfLogger.Category;
 import com.dataflow.flow.centric.lib.domain.ProcessedDataElement;
 import com.dataflow.flow.centric.lib.domain.SinkDataElement;
 import com.dataflow.flow.centric.lib.exceptions.IOFlowException;
 import com.dataflow.flow.centric.lib.helper.HQLHelper;
+import com.dataflow.flow.centric.lib.helper.LoggerHelper;
 import com.dataflow.flow.centric.lib.service.IFlowCentricService;
 import com.dataflow.flow.centric.lib.sink.helper.BsonHelper;
 import com.dataflow.flow.centric.lib.sql.entity.FlowInputData;
@@ -29,7 +33,6 @@ import com.dataflow.flow.centric.lib.sql.entity.FlowProcessData;
 import com.dataflow.flow.centric.lib.sql.repository.FlowInputDataRepository;
 import com.dataflow.flow.centric.lib.sql.repository.FlowProcessDataRepository;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 /**
@@ -37,8 +40,6 @@ import com.mongodb.client.MongoDatabase;
  *
  */
 @Component
-@EnableScheduling
-@Configuration
 public class FlowCentricSinkService implements IFlowCentricService<ProcessedDataElement, SinkDataElement> {
 
     @Value("${spring.data.mongodb.database}")
@@ -57,7 +58,7 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 	protected MongoClient mongoClient;
 	
 	@Autowired
-	protected NamesAndStandardsComponent namesAndStandardsComponent;
+	protected NamesAndStandardsService namesAndStandardsService;
 	/*
 	 * Updating the MONITOR DB about success during processing
 	 */
@@ -131,25 +132,53 @@ public class FlowCentricSinkService implements IFlowCentricService<ProcessedData
 			flowInputData = HQLHelper.loadFlowInputDataEntity(flowInputDataRepository, flowId);
 			flowProcessData = HQLHelper.loadFlowProcessDataEntity(flowProcessDataRepository, processId);
 			MongoDatabase db = mongoClient.getDatabase(database);
-			collections.addAll(BsonHelper.getMongoDbCollections(db));
+			collections.addAll(BsonHelper.getMongoDbCollections(mongoClient, db));
 			BsonDocument document = inputData.getBsonInputObject();
-			String collectionName = namesAndStandardsComponent.normalizeMongoDbCollectionName(inputData.getNoSqlCollection(), document);
+			String collectionName = namesAndStandardsService.normalizeMongoDbCollectionName(inputData.getNoSqlCollection(), document);
 			if ( ! collections.contains(collectionName) ) {
-				db.createCollection(collectionName);
+				BsonHelper.createMongoDbCollection(mongoClient, db, collectionName);
 			}
-			MongoCollection<Document> collection = db.getCollection(collectionName);
-			document.putIfAbsent("__bason_meta", inputData.getBsonMetadata().asDocument());
+			document.putIfAbsent("__bason_metatada_id", new BsonString(inputData.getBsonMetadataId()));
+			document.putIfAbsent("__bason_metatada_collection", new BsonString(inputData.getBsonMetadataCollection()) );
 			updateSuccess(flowId, flowInputData, flowProcessData);
 			Codec<Document> codec = db.getCodecRegistry().get(Document.class);
 			Document mongoDocument = codec.decode(document.asBsonReader(), DecoderContext.builder().build());
 			mongoDocument.put("_object_model", inputData.getModelType());
 			mongoDocument.put("_object_index", inputData.getIndex());
-			collection.insertOne( mongoDocument );
-			Long mongoDocumentId = 0l;
-			if ( mongoDocument.containsKey("_id") )
-				mongoDocumentId = mongoDocument.getLong("_id");
-			return new SinkDataElement(flowId, processId, modelType, document, inputData.getBsonMetadata(), collectionName, mongoDocumentId);
+			mongoDocument = BsonHelper.saveMongoDbElement(mongoClient, db, collectionName, mongoDocument);
+			String mongoDocumentId = "";
+			BsonDocument myDocument = BsonDocument.parse(mongoDocument.toJson());
+			Optional<String> mongoObjIdOpt = myDocument.entrySet()
+				.parallelStream()
+				.filter(e -> e.getKey().contentEquals("_id"))
+				.map( e -> {
+					BsonValue value = e.getValue();
+					if ( value.getBsonType() == BsonType.INT64 ) {
+						return ""+value.asInt64().getValue();
+					}
+					else if ( value.getBsonType() == BsonType.INT32 ) {
+						return ""+value.asInt64().longValue();
+					}
+					else if ( value.getBsonType() == BsonType.STRING ) {
+						return value.asString().getValue();
+					}
+					else if ( value.getBsonType() == BsonType.OBJECT_ID ) {
+						return value.asObjectId().getValue().toHexString();
+					}
+					return null;
+				})
+				.filter( v -> v != null )
+				.findFirst();
+			if ( mongoObjIdOpt.isPresent() ) {
+				mongoDocumentId = mongoObjIdOpt.get(); 
+			}
+			return new SinkDataElement(flowId, processId, modelType, document, 
+					inputData.getIndex(), inputData.getBsonMetadataId(), inputData.getBsonMetadataCollection(), 
+					collectionName, mongoDocumentId);
 		} catch (Exception e) {
+			e.printStackTrace();
+			String message = String.format("Unable to execute request for Stream Data Sink Service -> error (%s) message: %s -> input : %s", e.getClass().getName(), e.getMessage(), inputData);
+			LoggerHelper.logError(vlfLogger, "FlowCentricSinkService::computeStreamData", message, Category.BUSINESS_ERROR, e);
 			updateFailure(flowId, flowInputData, flowProcessData);
 		} finally {
 			mongoClient.close();

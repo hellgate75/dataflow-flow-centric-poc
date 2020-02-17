@@ -2,7 +2,10 @@
 	<modelVersion>4.0.0</modelVersion>
   	<groupId>com.dataflow.core</groupId>
   	<artifactId>dataflow-core-pom-parent</artifactId>
+  	<name>Foundation Logging Library Parent POM for Flow Centric PoC Framework</name>
+  	<description>Foundation Logging Library Parent POM for Flow Centric PoC Framework</description>
   	<version>19.11.1</version>
+  	<packaging>pom</packaging>
   
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -62,8 +65,5 @@
 		    <version>${mongo-bson.version}</version><!--$NO-MVN-MAN-VER$-->
 		</dependency>
 	</dependencies>
-	
-  	<packaging>pom</packaging>
-  	<name>dataflow-core-pom-parent</name>
   	
 </project>
