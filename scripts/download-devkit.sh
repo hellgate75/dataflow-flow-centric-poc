@@ -7,7 +7,7 @@ function download() {
 }
 
 function install() {
-	unzip "$2/$1" -d "$2"
+	unzip -o -q "$2/$1" -d "$2"
 
     if [[ "n" != "$3" ]]; then
 		rm -f "$2/$1"
