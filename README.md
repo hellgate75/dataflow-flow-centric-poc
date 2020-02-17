@@ -102,6 +102,17 @@ Please visit folder [scripts](/scripts)
 
 Information about docker compose [here](https://docs.docker.com/compose/install/) and command line reference [here](https://docs.docker.com/compose/reference/overview/). 
 
+Enjoy tour journey in Spring Cloud Dataflow Framework. 
+
+
+
+## Coming soon
+
+Upcoming branch with a compose with Spring Cloud Dataflow Server and the Spring Cloud Skipper Server you can scale as you can with you system resources and you will be able to scale differently the 3 applications registered in the Server (source, process and sink). 
+We will provide as well the 3 analytics boxes with some automation in the definition and recognition of model types, indexes. Autoplacing indexes required by the analy5ics nodes.
+We will use another streaming engine to push data in the metadata sourcing and used to pushback responses from the analytics sink.
+So let's get ready for a more intensive experience on the dataflow universe ...
+
 
 
 ## License
