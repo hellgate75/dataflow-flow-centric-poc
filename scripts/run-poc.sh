@@ -1,6 +1,5 @@
 #!/bin/sh
 
-
 PWD="$(pwd)"
 FOLDER="$(dirname "$(realpath "$0")")"
 
@@ -19,13 +18,15 @@ function isWindows() {
 		echo "yes";
 }
 
-function askYesNo() {
-	while [ "$choice" == "" ]; do
-		clear
+function makeQuestion() {
 		echo -e "$1? [Yes/No]"
 		if [[ "" != "$2" ]]; then
 			echo -e "$2"
 		fi
+}
+
+function askForYesOrNo() {
+	while [ "$choice" == "" ]; do
 		read choice
 		if [[ "" == "$(echo $choice | grep -i Y)" ]] && \
 		   [[ "" == "$(echo $choice | grep -i N)" ]]; then
@@ -67,7 +68,8 @@ if [[ "no" == "$DOCKER" ]] && [[ "" = "$(which docker-machine)" ]]; then
 fi
 INSTALL="no"
 if [[ "no" == "$DOCKER" ]]; then
-	INSTALL="$(askYesNo "You do not have installed any docker version, do you want to progress" "(In the case we have to install docker now)")"
+	makeQuestion "You do not have installed any docker version, do you want to progress" "(In the case we have to install docker now)"
+	INSTALL="$(askForYesOrNo)"
 fi
 
 if [[ "no" == "$INSTALL" ]] && [[ "no" == "$DOCKER" ]]; then
@@ -120,7 +122,8 @@ if [[ "yes" == "$INSTALL" ]]; then
 			echo "Please install Oracle VirtualBox v. 6.1 in order to instal docker!!"
 			echo "Try with experimental script: install-virtualbox.sh"
 			echo ""
-			INSTALL="$(askYesNo "Do you want to install VirtualBox")"
+			makeQuestion "Do you want to install VirtualBox"
+			INSTALL="$(askForYesOrNo)"
 			if [[ "yes" == "$INSTALL" ]]; then
 				sh $DOCKER_DIR/install-virtualbox.sh
 			fi
@@ -149,18 +152,28 @@ if [[ "yes" == "$INSTALL" ]]; then
 fi
 
 if [[ "" == "$(docker network ls|grep flowcentric)" ]]; then
-	CREATE="$(askYesNo "Do you want to create the compose now" "(You can start re run this script at any time)")"
+	makeQuestion "Do you want to create the compose now" "(You can start re run this script at any time)"
+	CREATE="$(askForYesOrNo)"
 	if [[ "yes" == "$CREATE" ]]; then
 		echo "PoC has not been created yet, now proceeding with creation"
 		sh $FOLDER/create-compose.sh
 	fi
 else
 	if [[ "" == "$(docker ps|grep rabbitmq|grep 3.8-rc-management-flow-centric)" ]]; then
-		START="$(askYesNo "Do you want to start the compose now" "(You can start and stop the architecture at any time using provided commands )")"
+		makeQuestion "Do you want to start the compose now" "(You can start and stop the architecture at any time using provided commands)"
+		START="$(askForYesOrNo)"
 		if [[ "yes" == "$START" ]]; then
 			echo "PoC has  been created yet, but it's not running."
 			echo "Now starting compose for you!!"
 			sh $FOLDER/start-compose.sh
+		else
+			makeQuestion "Do you want to destroy the compose now" "(You can start re run this script at any time)"
+			DESTROY="$(askForYesOrNo)"
+			if [[ "yes" == "$DESTROY" ]]; then
+				echo "PoC has  been destroyed now..."
+				echo "Now destroying compose for you!!"
+				sh $FOLDER/destroy-compose.sh
+			fi
 		fi
 	else
 		echo "PoC has  been created yet, and it's running."

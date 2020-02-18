@@ -33,5 +33,9 @@ if [[ "" == "$(docker network ls|grep flowcentric)" ]]; then
 	echo "Detected missing of basic components that means the docker compose is not created yet!!"
 	exit 1
 fi
+
+if [[ "" == "$(docker ps|grep rabbitmq|grep 3.8-rc-management-flow-centric)" ]]; then
+	sh $FOLDER/stop-compose.sh
+fi
 docker-compose down -v --remove-orphans
 
