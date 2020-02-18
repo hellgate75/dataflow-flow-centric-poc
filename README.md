@@ -1,4 +1,4 @@
-<p align="center"><image width="150" height="150" src="images/flow-centric-poc-logo.png">&nbsp;<image width="150" height="110" style="margin-top:-45px;" src="images/dataflow-logo.png"></image></p>
+<p align="center"><image width="150" height="150" src="images/flow-centric-poc-logo.png">&nbsp;<image width="150" height="110" src="images/dataflow-logo.png"></image></p>
 <p align="center"><image width="288" height="119" src="images/flow-centric.png"></p><br/>
 <p align="right"><img src="https://travis-ci.org/hellgate75/dataflow-flow-centric-poc.svg?branch=master" alt="trevis-ci" width="98" height="20" />&nbsp;<a href="https://travis-ci.org/hellgate75/dataflow-flow-centric-poc">Check last build on Travis-CI</a></p><br/>
 <br/>
