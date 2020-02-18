@@ -105,6 +105,14 @@ Information about docker compose [here](https://docs.docker.com/compose/install/
 Enjoy tour journey in Spring Cloud Dataflow Framework. 
 
 
+## Docker images repository
+
+Here the docker images sources repository:
+
+* [spring-dataflow-docker](https://github.com/hellgate75/spring-dataflow-docker/tree/flow-centric)
+
+
+
 
 ## Coming soon
 
