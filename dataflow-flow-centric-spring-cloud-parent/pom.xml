@@ -35,7 +35,7 @@
 		<cobertura.version>2.7</cobertura.version>
 		<dataflow.app.version>19.12.1</dataflow.app.version>
 		<groovy.all.version>2.5.1</groovy.all.version>
-		<guava.version>25.0-jre</guava.version>
+		<guava.version>29.0-jre</guava.version>
 		<http.client.version>4.5.6</http.client.version>
 		<jackson.annotations.version>2.9.6</jackson.annotations.version>
 		<springcloudstarterconfig.version>2.1.2.RELEASE</springcloudstarterconfig.version>
