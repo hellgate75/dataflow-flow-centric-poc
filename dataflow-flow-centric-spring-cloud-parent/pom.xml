@@ -29,7 +29,7 @@
 		<apache.commons.config.version>1.10</apache.commons.config.version>
 		<apache.commons.version>3.3.2</apache.commons.version>
 		<bcpkix-jdk15on.version>1.60</bcpkix-jdk15on.version>
-		<bcprov.jdk15on.version>1.60</bcprov.jdk15on.version>
+		<bcprov.jdk15on.version>1.67</bcprov.jdk15on.version>
 		<bouncy.castle.version>1.60</bouncy.castle.version>
 		<cassandra.driver.version>3.5.1</cassandra.driver.version>
 		<cobertura.version>2.7</cobertura.version>
